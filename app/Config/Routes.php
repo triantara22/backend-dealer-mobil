@@ -10,8 +10,9 @@ $routes->get('/', 'Home::index');
 
 // Mobil routes
 $routes->get('/mobil', 'MobilController::index');
-$routes->get('/mobil/simpan', 'MobilController::simpan');
+$routes->get('/mobil/create', 'MobilController::create');
+$routes->post('/mobil/simpan', 'MobilController::simpan');
 $routes->get('/mobil/filter/(:any)', 'MobilController::filter/$1');
 $routes->get('/mobil/edit/(:num)', 'MobilController::edit/$1');
-$routes->get('/mobil/update/(:num)', 'MobilController::update/$1');
-$routes->get('/mobil/delete/(:num)', 'MobilController::delete/$1');
+$routes->put('/mobil/update/(:num)', 'MobilController::update/$1');
+$routes->post('/mobil/delete/(:num)', 'MobilController::delete/$1');
