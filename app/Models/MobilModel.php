@@ -19,10 +19,10 @@ class MobilModel extends Model
         ->join('merek', 'merek.id = mobil.merek_id')
         ->findAll();
     }
-    public function getmobilwithmerekwhere($nama){
+    public function getmobilwithmereklike($nama){
         return $this->select('mobil.*, merek.nama')
         ->join('merek', 'merek.id = mobil.merek_id')
-        ->where('merek.nama',$nama)
+        ->like('merek.nama',$nama)
         ->findAll();
     }
 }
