@@ -22,7 +22,8 @@ class CreateMobilTable extends Migration
             ],
             'model'    => [
                 'type' => 'VARCHAR', 
-                'constraint' => 100
+                'constraint' => 100,
+                'unique' => true
             ],
             'tahun'    => [
                 'type' => 'YEAR'
