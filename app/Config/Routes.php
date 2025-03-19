@@ -10,6 +10,7 @@ $routes->get('/', 'Home::index');
 
 // Mobil routes
 $routes->get('/mobil', 'MobilController::index');
+$routes->get('/mobil/detail/(:num)', 'MobilController::detail/$1');
 $routes->get('/mobil/create', 'MobilController::create');
 $routes->post('/mobil/simpan', 'MobilController::simpan');
 $routes->get('/mobil/filter/(:any)', 'MobilController::filter/$1');

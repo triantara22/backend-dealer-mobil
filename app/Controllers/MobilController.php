@@ -21,10 +21,10 @@ class MobilController extends BaseController
     public function index()
     {
         try{
-            $data = $this->modelmobil->getmobilwithall();
+            $data = $this->modelmobil->getmobilwithmerek();
             if (empty($data)) {
                 return $this->response->setStatusCode(200)->setJSON([
-                    'status'  => 200,
+                    'status'  => 204,
                     'message' => 'Data Mobil Tidak Tersedia',
                     'data'    => [],
                 ]);
@@ -45,7 +45,7 @@ class MobilController extends BaseController
     public function detail($id)
     {
         try{
-            $data = $this->modelmobil->getmobilwithall($id);
+            $data = $this->modelmobil->getmobilwithid($id);
             if (empty($data)) {
                 return $this->response->setStatusCode(200)->setJSON([
                     'status'  => 200,
@@ -227,7 +227,6 @@ class MobilController extends BaseController
     
         // Ambil data merek (untuk dropdown atau pilihan merek)
         $merek = $merekmodel->findAll();
-    
         // Ambil data spesifikasi berdasarkan mobil_id
         $spesifikasi = $spekmodel->where('id_mobil', $id)->first();
         if (!$spesifikasi) {
