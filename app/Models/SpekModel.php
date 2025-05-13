@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 class SpekModel extends Model
 {
     protected $table            = 'spesifikasi';
-    protected $primaryKey       = 'id';
+    protected $primaryKey       = 'id_spek';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;

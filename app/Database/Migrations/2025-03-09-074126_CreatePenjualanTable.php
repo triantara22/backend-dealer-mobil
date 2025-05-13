@@ -3,7 +3,7 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
-class CreateSalesTable extends Migration
+class CreatePenjualanTable extends Migration
 {
     public function up()
     {

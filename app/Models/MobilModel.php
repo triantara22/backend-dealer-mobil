@@ -1,12 +1,11 @@
 <?php
-
 namespace App\Models;
 
 use CodeIgniter\Model;
 
 class MobilModel extends Model
 {
-     protected $table            = 'mobil';
+    protected $table            = 'mobil';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
@@ -25,10 +24,10 @@ class MobilModel extends Model
             ->join('spesifikasi', 'spesifikasi.id_mobil = mobil.id')
             ->find($id);
     }
-    public function getmobilwithmereklike($nama ,$harga , $tahun)
+    public function getmobilwithmereklike($nama, $harga, $tahun)
     {
         return $this->select('mobil.*')
-            ->like('merek.nama', $nama)
+            ->like('mobil.merek', $nama)
             ->like('mobil.harga', $harga)
             ->like('mobil.tahun', $tahun)
             ->findAll();

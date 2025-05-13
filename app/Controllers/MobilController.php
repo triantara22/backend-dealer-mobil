@@ -16,16 +16,13 @@ class MobilController extends BaseController
     public function __construct()
     {
         header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+        header("Access-Control-Allow-Methods: GET, PUT, DELETE, POST, OPTIONS,");
         header("Access-Control-Allow-Headers: Content-Type");
         $this->modelmobil = new MobilModel();
         $this->spekModel  = new SpekModel();
     }
     public function index()
     {
-        header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Methods: GET, POST, OPTIONS ,PUT");
-        header("Access-Control-Allow-Headers: Content-Type");
         try {
             $data = $this->modelmobil->getmobil();
             if (empty($data)) {
@@ -343,20 +340,19 @@ class MobilController extends BaseController
             ]);
         }
 
-        if (! empty($mobil->gambar)) {
-            $file = 'uploads/' . $mobil->gambar;
-        }
-        if (is_file($file)) {
-            unlink($file);
-        }
+        // if (! empty($mobil->gambar)) {
+        //     $file = 'uploads/' . $mobil->gambar;
+        // }
+        // if (is_file($file)) {
+        //     unlink($file);
+        // }
 
         $spekmodel->where('id_mobil', $id)->delete();
 
         $mobilmodel->delete($id);
-        return $this->response->setStatusCode(200)->setJSON([
-            'Status'  => 200,
-            'message' => "Data Berhasil Di hapus",
-            'Data'    => [],
+        return $this->respondDeleted([
+            'message' => 'Data Berhasil Dihapus',
+            'data'    => [],
         ]);
     }
 
