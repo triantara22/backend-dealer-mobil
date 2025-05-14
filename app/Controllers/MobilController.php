@@ -79,7 +79,7 @@ class MobilController extends BaseController
             'tahun'            => 'required|numeric|max_length[4]|min_length[4]',
             'harga'            => 'required|decimal',
             'stok'             => 'required|is_natural',
-            // 'gambar'           => 'uploaded[gambar]|mime_in[gambar,image/jpg,image/jpeg,image/png]|max_size[gambar,2048]',
+            'gambar'           => 'uploaded[gambar]|mime_in[gambar,image/jpg,image/jpeg,image/png]|max_size[gambar,2048]',
             'tipe_mesin'       => 'required|string',
             'tenaga'           => 'required|string',
             'torsi'            => 'required|string',
@@ -107,10 +107,10 @@ class MobilController extends BaseController
                 'required'   => 'Kolom ini harus diisi!',
                 'is_natural' => 'Stock harus berupa angka bulat positif atau 0!',
             ],
-            // 'gambar'           => [
-            //     'mime_in'  => 'File harus berupa gambar (JPG, JPEG, PNG)!',
-            //     'max_size' => 'Ukuran file gambar maksimal 2MB!',
-            // ],
+            'gambar'           => [
+                'mime_in'  => 'File harus berupa gambar (JPG, JPEG, PNG)!',
+                'max_size' => 'Ukuran file gambar maksimal 2MB!',
+            ],
             'tipe_mesin'       => [
                 'required' => 'Kolom ini harus diisi!',
             ],
@@ -155,14 +155,14 @@ class MobilController extends BaseController
         ];
 
         // validasi gambar dan menyimpan ke folder uploads serta menghapusnya ketika data di hapus
-        // $filefoto = $this->request->getFile('gambar');
-        // if ($filefoto->isValid() && ! $filefoto->hasMoved()) {
-        //     $namafile = $filefoto->getRandomname();
-        //     $filefoto->move('uploads', $namafile);
-        //     $mobilData['gambar'] = $namafile;
-        // } else {
-        //     unset($mobilData['gambar']);
-        // }
+        $filefoto = $this->request->getFile('gambar');
+        if ($filefoto->isValid() && ! $filefoto->hasMoved()) {
+            $namafile = $filefoto->getRandomname();
+            $filefoto->move('uploads', $namafile);
+            $mobilData['gambar'] = $namafile;
+        } else {
+            unset($mobilData['gambar']);
+        }
 
         try {
             $id_mobil = $this->modelmobil->insert($mobilData, true);
@@ -215,7 +215,7 @@ class MobilController extends BaseController
             'tahun'            => 'required|numeric|max_length[4]|min_length[4]',
             'harga'            => 'required|decimal',
             'stok'             => 'required|integer|max_length[11]',
-            // 'gambar'           => 'permit_empty|uploaded[gambar]|mime_in[gambar,image/jpg,image/jpeg,image/png]|max_size[gambar,2048]',
+            'gambar'           => 'uploaded[gambar]|mime_in[gambar,image/jpg,image/jpeg,image/png]|max_size[gambar,2048]',
             'tipe_mesin'       => 'required|string',
             'tenaga'           => 'required|string',
             'torsi'            => 'required|string',
@@ -243,10 +243,10 @@ class MobilController extends BaseController
                 'required'   => 'Kolom ini harus diisi!',
                 'is_natural' => 'Stock harus berupa angka bulat positif atau 0!',
             ],
-            // 'gambar'           => [
-            //     'mime_in'  => 'File harus berupa gambar (JPG, JPEG, PNG)!',
-            //     'max_size' => 'Ukuran file gambar maksimal 2MB!',
-            // ],
+            'gambar'           => [
+                'mime_in'  => 'File harus berupa gambar (JPG, JPEG, PNG)!',
+                'max_size' => 'Ukuran file gambar maksimal 2MB!',
+            ],
             'tipe_mesin'       => [
                 'required' => 'Kolom ini harus diisi!',
             ],
@@ -340,12 +340,12 @@ class MobilController extends BaseController
             ]);
         }
 
-        // if (! empty($mobil->gambar)) {
-        //     $file = 'uploads/' . $mobil->gambar;
-        // }
-        // if (is_file($file)) {
-        //     unlink($file);
-        // }
+        if (! empty($mobil->gambar)) {
+            $file = 'uploads/' . $mobil->gambar;
+        }
+        if (is_file($file)) {
+            unlink($file);
+        }
 
         $spekmodel->where('id_mobil', $id)->delete();
 

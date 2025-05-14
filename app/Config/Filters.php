@@ -33,6 +33,7 @@ class Filters extends BaseFilters
         'forcehttps'    => ForceHTTPS::class,
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
+        'cors'          => \App\Filters\CorsFilter::class,
     ];
 
     /**
@@ -76,6 +77,7 @@ class Filters extends BaseFilters
         'after'  => [
             // 'honeypot',
             // 'secureheaders',
+            'cors',
         ],
     ];
 
