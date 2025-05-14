@@ -6,7 +6,7 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 $routes->setAutoRoute(true);
-$routes->get('/', 'Home::index');
+$routes->get('/Home', 'Home::index');
 
 // Mobil routes
 $routes->get('/mobil', 'MobilController::index');
