@@ -203,8 +203,9 @@ class MobilController extends BaseController
 
     public function update($id)
     {
-        $existingMobil = $this->modelmobil->find($id);
-        if (! $existingMobil) {
+        // Ambil data mobil berdasarkan ID
+        $datamobil = $this->modelmobil->find($id);
+        if (! $datamobil) {
             return $this->failNotFound('Data mobil tidak ditemukan');
         }
 
@@ -274,7 +275,6 @@ class MobilController extends BaseController
         ];
 
         // Validasi Form (biarkan sesuai yang kamu buat)
-
         if (! $this->validate($rules, $errors)) {
             $response = [
                 'message' => $this->validator->getErrors(),
