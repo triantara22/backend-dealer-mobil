@@ -26,15 +26,13 @@ class CorsFilters implements FilterInterface
     {
         header("Access-Control-Allow-Origin: *");
         header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
-        header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+        header("Access-Control-Allow-Headers: X-API-KEY,Origin,Content-Type, Authorization, X-Requested-With,Accept,Access-Control-Request-Method");
 
         // Jika method OPTIONS, langsung return response kosong
-        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-            header("HTTP/1.1 200 OK");
-            exit;
+        if ($request->getMethod(true) === 'OPTIONS') {
+            return response()->setStatusCode(200);
         }
 
-        return $request;
     }
 
     /**
@@ -51,6 +49,7 @@ class CorsFilters implements FilterInterface
      */
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
-        //
+        return $response
+            ->setHeader(...);
     }
 }

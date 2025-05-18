@@ -12,7 +12,6 @@ use CodeIgniter\Filters\PageCache;
 use CodeIgniter\Filters\PerformanceMetrics;
 use CodeIgniter\Filters\SecureHeaders;
 
-
 class Filters extends BaseFilters
 {
     /**
@@ -35,6 +34,7 @@ class Filters extends BaseFilters
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
         'auth'          => \App\Filters\AuthFilter::class,
+        'Cors'          => \App\Filters\CorsFilters::class,
     ];
 
     /**
@@ -73,7 +73,7 @@ class Filters extends BaseFilters
             // 'honeypot',
             // 'csrf',
             // 'invalidchars',
-            'cors',
+            'Cors',
         ],
         'after'  => [
             // 'honeypot',
