@@ -15,9 +15,6 @@ class MobilController extends BaseController
     use ResponseTrait;
     public function __construct()
     {
-        header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Methods: GET, PUT, DELETE, POST, OPTIONS,");
-        header("Access-Control-Allow-Headers: Content-Type");
         $this->modelmobil = new MobilModel();
         $this->spekModel  = new SpekModel();
     }
@@ -26,20 +23,20 @@ class MobilController extends BaseController
         try {
             $data = $this->modelmobil->getmobil();
             if (empty($data)) {
-                return $this->response->setStatusCode(200)->setJSON([
-                    'status'  => 204,
+                return $this->response->setStatusCode(404)->setJSON([
+                    'status'  => false,
                     'message' => 'Data Mobil Tidak Tersedia',
                     'data'    => [],
                 ]);
             }
             return $this->response->setStatusCode(200)->setJSON([
-                'status'  => 200,
+                'status'  => true,
                 'message' => 'Data Ditemukan',
                 'data'    => $data,
             ]);
         } catch (Exception $e) {
             return $this->response->setStatusCode(500)->setJSON([
-                'Status'  => 500,
+                'Status'  => false,
                 'message' => "Internal server eror" . $e->getMessage(),
                 'data'    => [],
             ]);
@@ -51,19 +48,19 @@ class MobilController extends BaseController
             $data = $this->modelmobil->getmobilwithid($id);
             if (empty($data)) {
                 return $this->response->setStatusCode(200)->setJSON([
-                    'status'  => 200,
+                    'status'  => true,
                     'message' => 'Data Mobil Tidak Tersedia',
                     'data'    => [],
                 ]);
             }
             return $this->response->setStatusCode(200)->setJSON([
-                'status'  => 200,
+                'status'  => true,
                 'message' => 'Data Ditemukan',
                 'data'    => $data,
             ]);
         } catch (Exception $e) {
             return $this->response->setStatusCode(500)->setJSON([
-                'Status'  => 500,
+                'Status'  => false,
                 'message' => "Internal server eror" . $e->getMessage(),
                 'data'    => [],
             ]);
@@ -186,7 +183,7 @@ class MobilController extends BaseController
             $this->spekModel->insert($spekData);
 
             return $this->respondCreated([
-                'status'  => 201,
+                'status'  => true,
                 'message' => 'Data Berhasil Ditambahkan',
                 'data'    => [
                     $mobilData,
@@ -195,7 +192,7 @@ class MobilController extends BaseController
             ]);
         } catch (\Exception $e) {
             return $this->response->setStatusCode(500)->setJSON([
-                'status'  => 500,
+                'status'  => false,
                 'message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage(),
             ]);
         }
@@ -310,7 +307,7 @@ class MobilController extends BaseController
             $this->spekModel->where('id_mobil', $id)->set($spekData)->update();
 
             return $this->respond([
-                'status'  => 200,
+                'status'  => true,
                 'message' => 'Data Berhasil Diupdate',
                 'data'    => [
                     $mobilData,
@@ -319,7 +316,7 @@ class MobilController extends BaseController
             ]);
         } catch (\Exception $e) {
             return $this->response->setStatusCode(500)->setJSON([
-                'status'  => 500,
+                'status'  => false,
                 'message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage(),
                 'data'    => [],
             ]);
@@ -334,7 +331,7 @@ class MobilController extends BaseController
         $mobil = $this->modelmobil->find($id);
         if (! $mobil) {
             return $this->response->setStatusCode(404)->setJSON([
-                'status'  => 404,
+                'status'  => false,
                 'message' => 'Data Tidak Ditemukan',
                 'data'    => [],
             ]);
@@ -353,6 +350,18 @@ class MobilController extends BaseController
         return $this->respondDeleted([
             'message' => 'Data Berhasil Dihapus',
             'data'    => [],
+        ]);
+    }
+
+    public function ambildatafilter()
+    {
+        $datafilter = $this->modelmobil->getmerekhargatahun();
+        return $this->respond([
+            'status'  => true,
+            'message' => 'Data Berhasil diambil',
+            'data'    => [
+                $datafilter,
+            ],
         ]);
     }
 

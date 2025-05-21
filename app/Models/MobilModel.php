@@ -15,7 +15,8 @@ class MobilModel extends Model
 
     public function getmobil()
     {
-        return $this->select('mobil.*')
+        return $this->select('mobil.*, spesifikasi.*')
+            ->join('spesifikasi', 'spesifikasi.id_mobil = mobil.id')
             ->findAll();
     }
     public function getmobilwithid($id)
@@ -30,6 +31,11 @@ class MobilModel extends Model
             ->like('mobil.merek', $nama)
             ->like('mobil.harga', $harga)
             ->like('mobil.tahun', $tahun)
+            ->findAll();
+    }
+    public Function getmerekhargatahun()
+    {
+        return $this->select('merek, harga, tahun')
             ->findAll();
     }
 }
