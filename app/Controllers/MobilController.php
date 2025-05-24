@@ -5,6 +5,7 @@ use App\Controllers\BaseController;
 use App\Models\MobilModel;
 use App\Models\SpekModel;
 use CodeIgniter\API\ResponseTrait;
+use Firebase\JWT\JWT;
 use Exception;
 
 class MobilController extends BaseController
@@ -20,7 +21,21 @@ class MobilController extends BaseController
     }
     public function index()
     {
+        $key = getenv('token_secret');
+        $header = $this->request->getServer('HTTP_AUTHORIZATION');
+        if (!$header) {
+            return $this->failUnauthorized('token Required');
+        }
+        $token = explode(' ', $header)[1];
         try {
+            $decoded = JWT::decode($token,  $key, ['HS256']);
+            $response = [
+                'id' => $decoded->data->id,
+                'username' => $decoded->data->username,
+                'role' => $decoded->data->role,
+            ];
+            return $this->respond($response);
+
             $data = $this->modelmobil->getmobil();
             if (empty($data)) {
                 return $this->response->setStatusCode(404)->setJSON([
