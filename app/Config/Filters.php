@@ -33,7 +33,7 @@ class Filters extends BaseFilters
         'forcehttps'    => ForceHTTPS::class,
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
-        'Cors'          => \App\Filters\CorsFilters::class,
+        'auth'          => \App\Filters\AuthFilter::class,
     ];
 
     /**

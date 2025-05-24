@@ -4,8 +4,12 @@ namespace App\Filters;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+use Firebase\JWT\ExpiredException;
+use Config\Services;
 
-class CorsFilters implements FilterInterface
+class AuthFilter implements FilterInterface
 {
     /**
      * Do whatever processing this filter needs to do.
@@ -24,16 +28,34 @@ class CorsFilters implements FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
-        header("Access-Control-Allow-Headers: X-API-KEY,Origin,Content-Type, Authorization, X-Requested-With,Accept,Access-Control-Request-Method");
+        $authHeader = $request->getHeaderLine('Authorization');
 
-        // Jika method OPTIONS, langsung return response kosong
-        if ($request->getMethod(true) === 'OPTIONS') {
-            return response()->setStatusCode(200);
+        if (!$authHeader || !preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+            return Services::response()->setJSON(['message' => 'Token tidak ditemukan'])->setStatusCode(401);
         }
 
+        $token = $matches[1];
+        $key = getenv('token_secret');
+
+        try {
+            $decoded = JWT::decode($token, new Key($key, 'HS256'));
+        } catch (ExpiredException $e) {
+            return Services::response()->setJSON(['message' => 'Token kadaluarsa'])->setStatusCode(401);
+        } catch (\Exception $e) {
+            return Services::response()->setJSON(['message' => 'Token tidak valid'])->setStatusCode(401);
+        }
+
+        // Validasi role jika diberikan
+        if ($arguments && !in_array($decoded->data->role, $arguments)) {
+            return Services::response()->setJSON(['message' => 'Akses ditolak: role tidak sesuai'])->setStatusCode(403);
+        }
+
+        // Inject ke request jika perlu (opsional)
+        $request->user = $decoded->data;
+
+        return null;
     }
+
 
     /**
      * Allows After filters to inspect and modify the response
@@ -49,7 +71,6 @@ class CorsFilters implements FilterInterface
      */
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
-        return $response
-            ->setHeader(...);
+        //
     }
 }
