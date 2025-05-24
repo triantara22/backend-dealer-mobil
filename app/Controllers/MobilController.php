@@ -6,6 +6,7 @@ use App\Models\MobilModel;
 use App\Models\SpekModel;
 use CodeIgniter\API\ResponseTrait;
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use Exception;
 
 class MobilController extends BaseController
@@ -28,31 +29,40 @@ class MobilController extends BaseController
         }
         $token = explode(' ', $header)[1];
         try {
-            $decoded = JWT::decode($token,  $key, ['HS256']);
-            $response = [
-                'id' => $decoded->data->id,
-                'username' => $decoded->data->username,
-                'role' => $decoded->data->role,
-            ];
-            return $this->respond($response);
+            $decoded = JWT::decode($token, new Key($key, 'HS256'));
 
             $data = $this->modelmobil->getmobil();
             if (empty($data)) {
                 return $this->response->setStatusCode(404)->setJSON([
                     'status'  => false,
                     'message' => 'Data Mobil Tidak Tersedia',
+                    'user'    => [
+                        'id'       => $decoded->data->id,
+                        'username' => $decoded->data->username,
+                        'role'     => $decoded->data->role,
+                    ],
                     'data'    => [],
                 ]);
             }
             return $this->response->setStatusCode(200)->setJSON([
                 'status'  => true,
                 'message' => 'Data Ditemukan',
+                'user'    => [
+                'id'       => $decoded->data->id,
+                'username' => $decoded->data->username,
+                'role'     => $decoded->data->role,
+                ],
                 'data'    => $data,
             ]);
         } catch (Exception $e) {
             return $this->response->setStatusCode(500)->setJSON([
                 'Status'  => false,
                 'message' => "Internal server eror" . $e->getMessage(),
+                'user'    => [
+                'id'       => $decoded->data->id,
+                'username' => $decoded->data->username,
+                'role'     => $decoded->data->role,
+                ],
                 'data'    => [],
             ]);
         }
