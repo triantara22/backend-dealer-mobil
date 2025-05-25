@@ -22,47 +22,25 @@ class MobilController extends BaseController
     }
     public function index()
     {
-        $key = getenv('token_secret');
-        $header = $this->request->getServer('HTTP_AUTHORIZATION');
-        if (!$header) {
-            return $this->failUnauthorized('Token required');
-        }
-        $token = explode(' ', $header)[1];
-        try {
-            $decoded = JWT::decode($token, new Key($key, 'HS256'));
 
+        try {
             $data = $this->modelmobil->getmobil();
             if (empty($data)) {
                 return $this->response->setStatusCode(404)->setJSON([
                     'status'  => false,
                     'message' => 'Data Mobil Tidak Tersedia',
-                    'user'    => [
-                        'id'       => $decoded->data->id,
-                        'username' => $decoded->data->username,
-                        'role'     => $decoded->data->role,
-                    ],
                     'data'    => [],
                 ]);
             }
             return $this->response->setStatusCode(200)->setJSON([
                 'status'  => true,
                 'message' => 'Data Ditemukan',
-                'user'    => [
-                'id'       => $decoded->data->id,
-                'username' => $decoded->data->username,
-                'role'     => $decoded->data->role,
-                ],
                 'data'    => $data,
             ]);
         } catch (Exception $e) {
             return $this->response->setStatusCode(500)->setJSON([
                 'Status'  => false,
                 'message' => "Internal server eror" . $e->getMessage(),
-                'user'    => [
-                'id'       => $decoded->data->id,
-                'username' => $decoded->data->username,
-                'role'     => $decoded->data->role,
-                ],
                 'data'    => [],
             ]);
         }

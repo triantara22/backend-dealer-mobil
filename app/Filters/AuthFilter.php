@@ -1,13 +1,15 @@
 <?php
 namespace App\Filters;
 
+use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
+use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-use Firebase\JWT\ExpiredException;
-use Config\Services;
+use Exception;
+use Firebase\JWT\SignatureInvalidException;
 
 class AuthFilter implements FilterInterface
 {
@@ -26,36 +28,44 @@ class AuthFilter implements FilterInterface
      *
      * @return RequestInterface|ResponseInterface|string|void
      */
+    use ResponseTrait;
     public function before(RequestInterface $request, $arguments = null)
     {
-        $authHeader = $request->getHeaderLine('Authorization');
+        $key    = getenv('token_secret');
+        $header = $request->getServer('HTTP_AUTHORIZATION');
 
-        if (!$authHeader || !preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
-            return Services::response()->setJSON(['message' => 'Token tidak ditemukan'])->setStatusCode(401);
+        // 1. Cek keberadaan header Authorization
+        if (! $header) {
+            return $this->failUnauthorized('Token required');
         }
 
-        $token = $matches[1];
-        $key = getenv('token_secret');
+        // 2. Ekstrak token dari header (format: Bearer <token>)
+        $tokenParts = explode(' ', $header);
+        if (count($tokenParts) !== 2 || $tokenParts[0] !== 'Bearer') {
+            return $this->failUnauthorized('Format token tidak valid. Gunakan: Bearer <token>');
+        }
+        $token = $tokenParts[1];
 
         try {
+            // 3. Decode token dan validasi
             $decoded = JWT::decode($token, new Key($key, 'HS256'));
+
+            // 4. Cek claim role (jika diperlukan)
+            if (! isset($decoded->data->role) || $decoded->data->role !== 'admin') {
+                throw new Exception('Akses ditolak: Hanya admin yang diizinkan');
+            }
+
+            // 5. Simpan data user di request untuk digunakan di controller
+            $request->user = $decoded->data;
+
         } catch (ExpiredException $e) {
-            return Services::response()->setJSON(['message' => 'Token kadaluarsa'])->setStatusCode(401);
-        } catch (\Exception $e) {
-            return Services::response()->setJSON(['message' => 'Token tidak valid'])->setStatusCode(401);
+            return $this->failUnauthorized('Token kadaluarsa');
+        } catch (SignatureInvalidException $e) {
+            return $this->failUnauthorized('Token tidak valid');
+        } catch (Exception $e) {
+            return $this->failUnauthorized($e->getMessage());
         }
-
-        // Validasi role jika diberikan
-        if ($arguments && !in_array($decoded->data->role, $arguments)) {
-            return Services::response()->setJSON(['message' => 'Akses ditolak: role tidak sesuai'])->setStatusCode(403);
-        }
-
-        // Inject ke request jika perlu (opsional)
-        $request->user = $decoded->data;
-
-        return null;
     }
-
 
     /**
      * Allows After filters to inspect and modify the response
