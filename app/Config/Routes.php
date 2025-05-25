@@ -29,4 +29,19 @@ $routes->group('', ['filter' => 'Auth:admin'], function ($routes) {
     $routes->put('/pelanggan/update/(:segment)', 'PelangganController::update/$1');
     $routes->delete('/pelanggan/delete/(:segment)', 'PelangganController::delete/$1');
 
+    $routes->get('/penjualan', 'PenjualanController::index');
+    $routes->post('/penjualan/create', 'PenjualanController::Create');
+    $routes->put('/penjualan/update/(:segment)', 'PenjualanController::update/$1');
+    $routes->get('/penjualan/filter/(:any)', 'PenjualanController::filter/$1');
+// pembayaran routes
+    $routes->get('/pembayaran', 'PenjualanController::pembayaran');
+    $routes->get('/pembayaran/filter/(:segment)', 'PenjualanController::filterpembayaran/$1');
+
+});
+
+$routes->group('', ['filter' => 'Auth:sales'], function ($routes) {
+// sales
+    $routes->get('/salespenjualan', 'SalesController::index');
+    $routes->post('/salespenjualan/create', 'SalesController::Create');
+    $routes->get('/salespenjualan/filter', 'SalesController::filter');
 });
