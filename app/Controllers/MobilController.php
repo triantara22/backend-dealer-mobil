@@ -25,7 +25,7 @@ class MobilController extends BaseController
         $key = getenv('token_secret');
         $header = $this->request->getServer('HTTP_AUTHORIZATION');
         if (!$header) {
-            return $this->failUnauthorized('token Required');
+            return $this->failUnauthorized('Token required');
         }
         $token = explode(' ', $header)[1];
         try {

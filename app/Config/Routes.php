@@ -13,7 +13,7 @@ $routes->get('/Home', 'Home::index');
 $routes->post('/login', 'LoginController::login');
 $routes->options('/login', 'LoginController::login');
 
-$routes->group('', ['filter' => 'auth:admin'], function ($routes) {
+$routes->group('', ['filter' => 'Auth:admin'], function ($routes) {
 
 $routes->get('/mobil', 'MobilController::index');
 $routes->get('/mobil/detail/(:num)', 'MobilController::detail/$1');
@@ -22,6 +22,5 @@ $routes->get('/mobil/datafilter', 'MobilController::ambildatafilter');
 $routes->get('/mobil/filter/(:any)', 'MobilController::filter/$1');
 $routes->put('/mobil/update/(:num)', 'MobilController::update/$1');
 $routes->delete('/mobil/delete/(:num)', 'MobilController::delete/$1');
-
 
 });
