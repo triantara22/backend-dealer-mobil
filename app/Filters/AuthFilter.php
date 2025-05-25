@@ -5,14 +5,17 @@ use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
+use Config\Services;
+use Exception;
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-use Exception;
 use Firebase\JWT\SignatureInvalidException;
 
 class AuthFilter implements FilterInterface
 {
+    use ResponseTrait;
+    protected $response;
     /**
      * Do whatever processing this filter needs to do.
      * By default it should not return anything during
@@ -28,18 +31,20 @@ class AuthFilter implements FilterInterface
      *
      * @return RequestInterface|ResponseInterface|string|void
      */
-    use ResponseTrait;
+
     public function before(RequestInterface $request, $arguments = null)
     {
+        $this->response = Services::response();
+
         $key    = getenv('token_secret');
         $header = $request->getServer('HTTP_AUTHORIZATION');
 
-        // 1. Cek keberadaan header Authorization
+        // 1. Check for Authorization header
         if (! $header) {
             return $this->failUnauthorized('Token required');
         }
 
-        // 2. Ekstrak token dari header (format: Bearer <token>)
+        // 2. Extract token from header
         $tokenParts = explode(' ', $header);
         if (count($tokenParts) !== 2 || $tokenParts[0] !== 'Bearer') {
             return $this->failUnauthorized('Format token tidak valid. Gunakan: Bearer <token>');
@@ -47,15 +52,15 @@ class AuthFilter implements FilterInterface
         $token = $tokenParts[1];
 
         try {
-            // 3. Decode token dan validasi
+            // 3. Decode and validate token
             $decoded = JWT::decode($token, new Key($key, 'HS256'));
 
-            // 4. Cek claim role (jika diperlukan)
+            // 4. Check role claim
             if (! isset($decoded->data->role) || $decoded->data->role !== 'admin') {
                 throw new Exception('Akses ditolak: Hanya admin yang diizinkan');
             }
 
-            // 5. Simpan data user di request untuk digunakan di controller
+            // 5. Store user data in request
             $request->user = $decoded->data;
 
         } catch (ExpiredException $e) {
