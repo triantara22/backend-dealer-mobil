@@ -1,24 +1,26 @@
 <?php
+
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-use App\Models\LayananModel;
-use CodeIgniter\API\ResponseTrait;
+use CodeIgniter\HTTP\ResponseInterface;
 use Exception;
+use CodeIgniter\API\ResponseTrait;
+use App\Models\GaransiModel;
 
-class LayananController extends BaseController
+class Garansi extends BaseController
 {
-    protected $layananmodel;
+    protected $garansimodel;
     use ResponseTrait;
     public function __construct()
     {
-        $this->layananmodel = new LayananModel();
+        $this->garansimodel = new GaransiModel();
     }
 
     public function index()
     {
         try {
-            $data = $this->layananmodel->getlayanan();
+            $data = $this->garansimodel->getdatagaransi();
             if (empty($data)) {
                 return $this->response->setStatusCode(404)->setJSON([
                     'status'  => false,
@@ -42,22 +44,23 @@ class LayananController extends BaseController
 
     public function create()
     {
-        $id          = $this->layananmodel->generateId();
-        $datalayanan = [
+        $id          = $this->garansimodel->generateId();
+        $datagaransi = [
             'id'              => $id,
             'pelanggan_id'    => esc($this->request->getVar('pelanggan_id')),
             'mobil_id'        => esc($this->request->getVar('mobil_id')),
-            'tanggal_layanan' => esc($this->request->getVar('tanggal_layanan')),
-            'deskripsi'       => esc($this->request->getVar('deskripsi')),
-            'biaya'           => esc($this->request->getVar('biaya')),
+            'tanggal_mulai' => esc($this->request->getVar('tanggal_mulai')),
+            'tanggal_berakhir' => esc($this->request->getVar('tanggal_berakhir')),
+            'detail_garansi'       => esc($this->request->getVar('detail_garansi')),
+            'klaim_status'           => esc($this->request->getVar('klaim_status')),
         ];
-
-        $this->layananmodel->insert($datalayanan, true);
+        
+        $this->garansimodel->insert($datagaransi, true);
         return $this->respondCreated([
             'status'  => true,
             'message' => 'Data Berhasil Ditambahkan',
             'data'    => [
-                $datalayanan,
+                $datagaransi,
             ],
         ]);
     }
@@ -67,21 +70,23 @@ class LayananController extends BaseController
 
         try
         {
-            $dataUpdate = [
-                'pelanggan_id'    => esc($this->request->getVar('pelanggan_id')),
-                'mobil_id'        => esc($this->request->getVar('mobil_id')),
-                'tanggal_layanan' => esc($this->request->getVar('tanggal_layanan')),
-                'deskripsi'       => esc($this->request->getVar('deskripsi')),
-                'biaya'           => esc($this->request->getVar('biaya')),
+            $datagaransi = [
+            'id'              => $id,
+            'pelanggan_id'    => esc($this->request->getVar('pelanggan_id')),
+            'mobil_id'        => esc($this->request->getVar('mobil_id')),
+            'tanggal_mulai' => esc($this->request->getVar('tanggal_mulai')),
+            'tanggal_berakhir' => esc($this->request->getVar('tanggal_berakhir')),
+            'detail_garansi'       => esc($this->request->getVar('detail_garansi')),
+            'klaim_status'           => esc($this->request->getVar('klaim_status')),
             ];
 
             // Lakukan update data
-            $this->layananmodel->update($id, $dataUpdate);
+            $this->garansimodel->update($id, $datagaransi);
 
             return $this->response->setStatusCode(200)->setJSON([
                 'status'  => true,
                 'message' => 'Data berhasil diperbarui',
-                'data'    => $dataUpdate,
+                'data'    => $datagaransi,
             ]);
         } catch (Exception $e) {
             return $this->response->setStatusCode(500)->setJSON([
@@ -93,10 +98,11 @@ class LayananController extends BaseController
 
     }
 
-    public function filter($tanggal, $nama, $model)
+
+    public function filter($nama, $klaim_status)
     {
         try {
-            $data = $this->layananmodel->filter($tanggal, $nama, $model);
+            $data = $this->garansimodel->filter($nama, $klaim_status);
             if (empty($data)) {
                 return $this->response->setStatusCode(404)->setJSON([
                     'status'  => false,
@@ -117,4 +123,43 @@ class LayananController extends BaseController
             ]);
         }
     }
+
+    public function klaimgaransi()
+    {
+        try {
+            $data = $this->garansimodel->getklaimgaransi();
+            if (empty($data)) {
+                return $this->response->setStatusCode(404)->setJSON([
+                    'status'  => false,
+                    'message' => 'Data Mobil Tidak Tersedia',
+                    'data'    => [],
+                ]);
+            }
+            return $this->response->setStatusCode(200)->setJSON([
+                'status'  => true,
+                'message' => 'Data Ditemukan',
+                'data'    => $data,
+            ]);
+        } catch (Exception $e) {
+            return $this->response->setStatusCode(500)->setJSON([
+                'Status'  => false,
+                'message' => "Internal server eror" . $e->getMessage(),
+                'data'    => [],
+            ]);
+        }
+    }
+
+
+
+    public function delete($id)
+    {
+        $this->garansimodel->delete($id);
+        return $this->respondDeleted([
+            'status'  => true,
+            'message' => 'Data Berhasil Dihapus',
+            'data'    => [],
+        ]);
+    }
+
+
 }
