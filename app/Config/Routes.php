@@ -7,17 +7,24 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->setTranslateURIDashes(false);
 $routes->setAutoRoute(false);
+
+$routes->options('(:any)', function () {
+    return response()->setJSON(['status' => 'OK']);
+});
+
 $routes->get('/Home', 'Home::index');
 
 $routes->post('/login', 'LoginController::login');
 $routes->options('/login', 'LoginController::login');
+
+// $routes->get('/mobil', 'MobilController::index');
 
 $routes->group('', ['filter' => 'Auth:admin'], function ($routes) {
     // mobil
     $routes->get('/mobil', 'MobilController::index');
     $routes->get('/mobil/detail/(:num)', 'MobilController::detail/$1');
     $routes->post('/mobil/create', 'MobilController::create');
-    $routes->get('/mobil/datafilter', 'MobilController::ambildatafilter');
+    $routes->get('/mobil/all', 'MobilController::ambildatafilter');
     $routes->get('/mobil/filter/(:any)', 'MobilController::filter/$1');
     $routes->put('/mobil/update/(:num)', 'MobilController::update/$1');
     $routes->delete('/mobil/delete/(:num)', 'MobilController::delete/$1');
@@ -28,9 +35,10 @@ $routes->group('', ['filter' => 'Auth:admin'], function ($routes) {
     $routes->get('/pelanggan/detail/(:segment)', 'PelangganController::detail/$1');
     $routes->post('/pelanggan/create', 'PelangganController::create');
     $routes->put('/pelanggan/update/(:segment)', 'PelangganController::update/$1');
-    $routes->delete('/pelanggan/delete/(:segment)', 'PelangganController::delete/$1');
+    $routes->DELETE('/pelanggan/delete/(:segment)', 'PelangganController::delete/$1');
 
     $routes->get('/penjualan', 'PenjualanController::index');
+    $routes->get('/penjualan/(:segment)', 'PenjualanController::index/$1');
     $routes->post('/penjualan/create', 'PenjualanController::Create');
     $routes->put('/penjualan/update/(:segment)', 'PenjualanController::update/$1');
     $routes->get('/penjualan/filter/(:any)', 'PenjualanController::filter/$1');
@@ -64,7 +72,6 @@ $routes->group('', ['filter' => 'Auth:sales'], function ($routes) {
     $routes->post('/salespenjualan/create', 'SalesController::Create');
     $routes->get('/salespenjualan/filter', 'SalesController::filter');
 
-    
 });
 
 $routes->group('', ['filter' => 'Auth:costumer service'], function ($routes) {

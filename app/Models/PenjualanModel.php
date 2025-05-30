@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use CodeIgniter\Model;
@@ -16,9 +15,11 @@ class PenjualanModel extends Model
 
     public function getpenjualan()
     {
-        return $this->select('penjualan.*, pelanggan.nama, mobil.model')
+        return $this->select('penjualan.*, pelanggan.nama, mobil.model , users.username ,pembayaran.metode_pembayaran, pembayaran.jumlah_bayar')
             ->join('pelanggan', 'penjualan.pelanggan_id = pelanggan.id')
             ->join('mobil', 'penjualan.mobil_id = mobil.id')
+            ->join('users', 'penjualan.user_id = users.id')
+            ->join('pembayaran', 'pembayaran.penjualan_id = penjualan.id', 'left')
             ->orderBy('penjualan.tanggal_transaksi', 'DESC')
             ->findAll();
     }

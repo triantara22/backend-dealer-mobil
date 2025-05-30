@@ -147,12 +147,9 @@ class PenjualanController extends BaseController
     public function update($id)
     {
         $rules = [
-            'pelanggan_id'      => 'required',
-            'mobil_id'          => 'required',
-            'user_id'           => 'required',
-            'total_harga'       => 'required',
-            'jumlah_bayar'      => 'required',
-            'metode_pembayaran' => 'required|in_list[cash,transfer]',
+            'status_pembayaran' => 'permit_empty',
+            'jumlah_bayar'      => 'permit_empty|numeric',
+            'metode_pembayaran' => 'permit_empty|in_list[cash,transfer]',
         ];
 
         $errors = [
