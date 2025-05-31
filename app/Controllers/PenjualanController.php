@@ -22,9 +22,9 @@ class PenjualanController extends BaseController
         try {
             $data = $this->penjualan->getpenjualan();
             if (empty($data)) {
-                return $this->response->setStatusCode(404)->setJSON([
-                    'status'  => false,
-                    'message' => 'Data Mobil Tidak Tersedia',
+                return $this->response->setStatusCode(200)->setJSON([
+                    'status'  => true,
+                    'message' => 'Data penjualan Tidak Tersedia',
                     'data'    => [],
                 ]);
             }
@@ -47,9 +47,9 @@ class PenjualanController extends BaseController
         try {
             $data = $this->pembayaran->getpembayaran();
             if (empty($data)) {
-                return $this->response->setStatusCode(404)->setJSON([
-                    'status'  => false,
-                    'message' => 'Data Mobil Tidak Tersedia',
+                return $this->response->setStatusCode(200)->setJSON([
+                    'status'  => true,
+                    'message' => 'Data pembayarn Tidak Tersedia',
                     'data'    => [],
                 ]);
             }
@@ -207,6 +207,16 @@ class PenjualanController extends BaseController
                 'data'    => [],
             ]);
         }
+    }
+
+        public function delete($id)
+    {
+        $this->penjualan->delete($id);
+        return $this->respondDeleted([
+            'status'  => true,
+            'message' => 'Data Berhasil Dihapus',
+            'data'    => [],
+        ]);
     }
 
     public function filter()

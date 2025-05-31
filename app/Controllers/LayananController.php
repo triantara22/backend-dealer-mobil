@@ -20,9 +20,9 @@ class LayananController extends BaseController
         try {
             $data = $this->layananmodel->getlayanan();
             if (empty($data)) {
-                return $this->response->setStatusCode(404)->setJSON([
-                    'status'  => false,
-                    'message' => 'Data Mobil Tidak Tersedia',
+                return $this->response->setStatusCode(200)->setJSON([
+                    'status'  => true,
+                    'message' => 'Data layanan Tidak Tersedia',
                     'data'    => [],
                 ]);
             }
@@ -98,9 +98,9 @@ class LayananController extends BaseController
         try {
             $data = $this->layananmodel->filter($tanggal, $nama, $model);
             if (empty($data)) {
-                return $this->response->setStatusCode(404)->setJSON([
-                    'status'  => false,
-                    'message' => 'Data Mobil Tidak Tersedia',
+                return $this->response->setStatusCode(200)->setJSON([
+                    'status'  => true,
+                    'message' => 'Data layanan Tidak Tersedia',
                     'data'    => [],
                 ]);
             }

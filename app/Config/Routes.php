@@ -38,6 +38,7 @@ $routes->group('', ['filter' => 'Auth:admin'], function ($routes) {
     $routes->get('/pelanggan', 'PelangganController::index');
     $routes->get('/pelanggan/filter/(:any)', 'PelangganController::filter/$1');
     $routes->get('/pelanggan/detail/(:segment)', 'PelangganController::detail/$1');
+    $routes->get('/pelanggan/histori/(:segment)', 'PelangganController::histori/$1');
     $routes->post('/pelanggan/create', 'PelangganController::create');
     $routes->put('/pelanggan/update/(:segment)', 'PelangganController::update/$1');
     $routes->DELETE('/pelanggan/delete/(:segment)', 'PelangganController::delete/$1');
@@ -46,6 +47,7 @@ $routes->group('', ['filter' => 'Auth:admin'], function ($routes) {
     $routes->get('/penjualan/(:segment)', 'PenjualanController::index/$1');
     $routes->post('/penjualan/create', 'PenjualanController::Create');
     $routes->put('/penjualan/update/(:segment)', 'PenjualanController::update/$1');
+    $routes->delete('/penjualan/delete/(:segment)', 'PenjualanController::delete/$1');
     $routes->get('/penjualan/filter/(:any)', 'PenjualanController::filter/$1');
     $routes->get('/penjualan/all', 'PenjualanController::ambildatafilter');
     // pembayaran routes

@@ -23,6 +23,18 @@ class PenjualanModel extends Model
             ->orderBy('penjualan.tanggal_transaksi', 'DESC')
             ->findAll();
     }
+
+    public function histori($id)
+    {
+        return $this->select('penjualan.tanggal_transaksi,mobil.merek,mobil.model,penjualan.total_harga,
+                penjualan.status_pembayaran,pelanggan.nama')
+            ->join('pelanggan', 'penjualan.pelanggan_id = pelanggan.id')
+            ->join('mobil', 'penjualan.mobil_id = mobil.id')
+            ->where('penjualan.pelanggan_id', $id)
+            ->orderBy('penjualan.tanggal_transaksi', 'DESC')
+            ->findAll();
+
+    }  
     public function getpenjualanwithid($id)
     {
         return $this->select('penjualan.*, pelanggan.nama, mobil.model')

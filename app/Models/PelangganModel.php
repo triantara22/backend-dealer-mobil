@@ -9,7 +9,6 @@ class PelangganModel extends Model
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = false;
     protected $returnType       = 'array';
-    
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = ['id','nama', 'email', 'alamat', 'telepon'];
