@@ -5,6 +5,11 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
+
+$routes->options('(:any)', function () {
+    return response()->setJSON(['status' => 'OK']);
+});
+
 $routes->setTranslateURIDashes(false);
 $routes->setAutoRoute(false);
 $routes->get('/Home', 'Home::index');
@@ -17,7 +22,7 @@ $routes->group('', ['filter' => 'Auth:admin'], function ($routes) {
     $routes->get('/mobil', 'MobilController::index');
     $routes->get('/mobil/detail/(:num)', 'MobilController::detail/$1');
     $routes->post('/mobil/create', 'MobilController::create');
-    $routes->get('/mobil/datafilter', 'MobilController::ambildatafilter');
+    $routes->get('/mobil/all', 'MobilController::ambildatafilter');
     $routes->get('/mobil/filter/(:any)', 'MobilController::filter/$1');
     $routes->put('/mobil/update/(:num)', 'MobilController::update/$1');
     $routes->delete('/mobil/delete/(:num)', 'MobilController::delete/$1');
