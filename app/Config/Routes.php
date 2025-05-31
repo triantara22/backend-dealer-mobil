@@ -63,7 +63,7 @@ $routes->group('', ['filter' => 'Auth:admin'], function ($routes) {
 
     $routes->get('/klaimgaransi', 'Garansi::index');
     $routes->get('/klaimgaransi/filter/(:any)', 'Garansi::filter/$1');
-    $routes->put('/garansi/update/(:segment)', 'Garansi::update/$1');
+    $routes->put('/klaimgaransi/update/(:segment)', 'Garansi::update/$1');
 });
 
 $routes->group('', ['filter' => 'Auth:sales'], function ($routes) {

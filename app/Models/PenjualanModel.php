@@ -15,7 +15,7 @@ class PenjualanModel extends Model
 
     public function getpenjualan()
     {
-        return $this->select('penjualan.*, pelanggan.nama, mobil.model , users.username ,pembayaran.metode_pembayaran, pembayaran.jumlah_bayar')
+        return $this->select('penjualan.*, pelanggan.nama, mobil.model , mobil.merek, users.username ,pembayaran.metode_pembayaran, pembayaran.jumlah_bayar')
             ->join('pelanggan', 'penjualan.pelanggan_id = pelanggan.id')
             ->join('mobil', 'penjualan.mobil_id = mobil.id')
             ->join('users', 'penjualan.user_id = users.id')
@@ -33,11 +33,11 @@ class PenjualanModel extends Model
 
     public function filter($tanggaltr, $status, $namamobil)
     {
-        return $this->select('penjualan.*, pelanggan.nama, mobil.model')
+        return $this->select('penjualan.*, pelanggan.nama, mobil.model , mobil.merek')
             ->join('pelanggan', 'penjualan.pelanggan_id = pelanggan.id')
             ->join('mobil', 'penjualan.mobil_id = mobil.id')
             ->like('penjualan.tanggal_transaksi', $tanggaltr)
-            ->like('mobil.model', $namamobil)
+            ->like('mobil.merek', $namamobil)
             ->like('penjualan.status_pembayaran', $status)
             ->findAll();
     }
