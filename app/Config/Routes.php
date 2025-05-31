@@ -76,9 +76,15 @@ $routes->group('', ['filter' => 'Auth:admin'], function ($routes) {
 
 $routes->group('', ['filter' => 'Auth:sales'], function ($routes) {
 // sales
-    $routes->get('/salespenjualan', 'SalesController::index');
+    $routes->get('/salespenjualan', 'SalesController::daftarmobil');
+    $routes->get('/salespenjualan/(:num)', 'SalesController::daftarmobilid/$1');
+    $routes->get('/salespenjualan/jual', 'SalesController::index');
     $routes->post('/salespenjualan/create', 'SalesController::Create');
     $routes->get('/salespenjualan/filter', 'SalesController::filter');
+
+    // pembayaran
+    $routes->get('/salespelanggan', 'Salespelanggan::index');
+    $routes->get('/salespelanggan/filter/(:segment)', 'Salespelanggan::filtersales/$1');
 
 });
 
