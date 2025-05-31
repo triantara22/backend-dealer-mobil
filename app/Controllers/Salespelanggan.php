@@ -24,9 +24,9 @@ class Salespelanggan extends BaseController
         try {
             $data = $this->pelangganmodel->getpelanggan();
             if (empty($data)) {
-                return $this->response->setStatusCode(404)->setJSON([
-                    'status'  => false,
-                    'message' => 'Data Mobil Tidak Tersedia',
+                return $this->response->setStatusCode(200)->setJSON([
+                    'status'  => true,
+                    'message' => 'Data pelanggan Tidak Tersedia',
                     'data'    => [],
                 ]);
             }
