@@ -277,12 +277,27 @@ class MobilController extends BaseController
             ],
         ];
 
-        // Validasi Form (biarkan sesuai yang kamu buat)
+        // Tambahkan validasi file jika ada gambar baru
+        if ($isGambarUploaded) {
+            $rules['gambar'] = 'uploaded[gambar]|mime_in[gambar,image/jpg,image/jpeg,image/png]|max_size[gambar,2048]';
+        }
+
+        // Validasi semua sekaligus
         if (! $this->validate($rules, $errors)) {
-            $response = [
-                'message' => $this->validator->getErrors(),
-            ];
-            return $this->failValidationErrors($response);
+            return $this->failValidationErrors(['message' => $this->validator->getErrors()]);
+        }
+
+        // Proses file gambar (jika ada)
+        if ($isGambarUploaded) {
+            $namaGambar = $gambarBaru->getRandomName();
+            $gambarBaru->move('uploads', $namaGambar);
+
+            // Hapus gambar lama jika ada
+            if (! empty($datamobil['gambar']) && file_exists('uploads' . $datamobil['gambar'])) {
+                unlink('uploads' . $datamobil['gambar']);
+            }
+        } else {
+            $namaGambar = $datamobil['gambar']; // gunakan gambar lama
         }
         // Tambahkan validasi file jika ada gambar baru
         if ($isGambarUploaded) {

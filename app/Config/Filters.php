@@ -2,7 +2,6 @@
 namespace Config;
 
 use CodeIgniter\Config\Filters as BaseFilters;
-use CodeIgniter\Filters\Cors;
 use CodeIgniter\Filters\CSRF;
 use CodeIgniter\Filters\DebugToolbar;
 use CodeIgniter\Filters\ForceHTTPS;
@@ -33,7 +32,7 @@ class Filters extends BaseFilters
         'forcehttps'    => ForceHTTPS::class,
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
-        'Auth'          => \App\Filters\AuthFilter::class,
+        'Auth'          => AuthFilter::class,
         'customcors'    => CorsFilters::class, // Ubah nama untuk menghindari konflik
     ];
 
@@ -73,12 +72,12 @@ class Filters extends BaseFilters
             // 'honeypot',
             // 'csrf',
             // 'invalidchars',
-            'Cors',
+            'customcors',
         ],
         'after'  => [
             // 'honeypot',
             // 'secureheaders',
-            'Cors',
+            'customcors',
         ],
     ];
 

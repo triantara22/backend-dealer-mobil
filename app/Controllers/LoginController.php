@@ -62,6 +62,7 @@ class LoginController extends BaseController
         return $this->respond([
             'message' => 'Login berhasil',
             'token'   => $token,
+            'data'    => $user,
         ]);
     }
 }

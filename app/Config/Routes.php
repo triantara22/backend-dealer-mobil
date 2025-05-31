@@ -12,10 +12,17 @@ $routes->options('(:any)', function () {
 
 $routes->setTranslateURIDashes(false);
 $routes->setAutoRoute(false);
+
+$routes->options('(:any)', function () {
+    return response()->setJSON(['status' => 'OK']);
+});
+
 $routes->get('/Home', 'Home::index');
 
 $routes->post('/login', 'LoginController::login');
 $routes->options('/login', 'LoginController::login');
+
+// $routes->get('/mobil', 'MobilController::index');
 
 $routes->group('', ['filter' => 'Auth:admin'], function ($routes) {
     // mobil
@@ -33,12 +40,14 @@ $routes->group('', ['filter' => 'Auth:admin'], function ($routes) {
     $routes->get('/pelanggan/detail/(:segment)', 'PelangganController::detail/$1');
     $routes->post('/pelanggan/create', 'PelangganController::create');
     $routes->put('/pelanggan/update/(:segment)', 'PelangganController::update/$1');
-    $routes->delete('/pelanggan/delete/(:segment)', 'PelangganController::delete/$1');
+    $routes->DELETE('/pelanggan/delete/(:segment)', 'PelangganController::delete/$1');
 
     $routes->get('/penjualan', 'PenjualanController::index');
+    $routes->get('/penjualan/(:segment)', 'PenjualanController::index/$1');
     $routes->post('/penjualan/create', 'PenjualanController::Create');
     $routes->put('/penjualan/update/(:segment)', 'PenjualanController::update/$1');
     $routes->get('/penjualan/filter/(:any)', 'PenjualanController::filter/$1');
+    $routes->get('/penjualan/all', 'PenjualanController::ambildatafilter');
     // pembayaran routes
     $routes->get('/pembayaran', 'PenjualanController::pembayaran');
     $routes->get('/pembayaran/filter/(:segment)', 'PenjualanController::filterpembayaran/$1');
@@ -60,7 +69,7 @@ $routes->group('', ['filter' => 'Auth:admin'], function ($routes) {
 
     $routes->get('/klaimgaransi', 'Garansi::index');
     $routes->get('/klaimgaransi/filter/(:any)', 'Garansi::filter/$1');
-    $routes->put('/garansi/update/(:segment)', 'Garansi::update/$1');
+    $routes->put('/klaimgaransi/update/(:segment)', 'Garansi::update/$1');
 });
 
 $routes->group('', ['filter' => 'Auth:sales'], function ($routes) {
@@ -69,7 +78,6 @@ $routes->group('', ['filter' => 'Auth:sales'], function ($routes) {
     $routes->post('/salespenjualan/create', 'SalesController::Create');
     $routes->get('/salespenjualan/filter', 'SalesController::filter');
 
-    
 });
 
 $routes->group('', ['filter' => 'Auth:costumer service'], function ($routes) {
