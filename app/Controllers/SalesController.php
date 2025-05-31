@@ -2,6 +2,7 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Models\MobilModel;
 use App\Models\PembayaranModel;
 use App\Models\PenjualanModel;
 use CodeIgniter\API\ResponseTrait;
@@ -11,20 +12,70 @@ class SalesController extends BaseController
 {
     protected $penjualan;
     protected $pembayaran;
+    protected $daftarmobil;
     use ResponseTrait;
     public function __construct()
     {
-        $this->penjualan  = new PenjualanModel();
-        $this->pembayaran = new PembayaranModel();
+        $this->penjualan   = new PenjualanModel();
+        $this->pembayaran  = new PembayaranModel();
+        $this->daftarmobil = new MobilModel();
+    }
+    public function daftarmobil()
+    {
+        try {
+            $data = $this->daftarmobil->getmobil();
+            if (empty($data)) {
+                return $this->response->setStatusCode(200)->setJSON([
+                    'status'  => true,
+                    'message' => 'Data transaksi Tidak Tersedia',
+                    'data'    => [],
+                ]);
+            }
+            return $this->response->setStatusCode(200)->setJSON([
+                'status'  => true,
+                'message' => 'Data Ditemukan',
+                'data'    => $data,
+            ]);
+        } catch (Exception $e) {
+            return $this->response->setStatusCode(500)->setJSON([
+                'Status'  => false,
+                'message' => "Internal server eror" . $e->getMessage(),
+                'data'    => [],
+            ]);
+        }
+    }
+    public function daftarmobilid($id)
+    {
+        try {
+            $data = $this->daftarmobil->getmobilwithid($id);
+            if (empty($data)) {
+                return $this->response->setStatusCode(200)->setJSON([
+                    'status'  => true,
+                    'message' => 'Data transaksi Tidak Tersedia',
+                    'data'    => [],
+                ]);
+            }
+            return $this->response->setStatusCode(200)->setJSON([
+                'status'  => true,
+                'message' => 'Data Ditemukan',
+                'data'    => $data,
+            ]);
+        } catch (Exception $e) {
+            return $this->response->setStatusCode(500)->setJSON([
+                'Status'  => false,
+                'message' => "Internal server eror" . $e->getMessage(),
+                'data'    => [],
+            ]);
+        }
     }
     public function index()
     {
         try {
             $data = $this->penjualan->getpenjualan();
             if (empty($data)) {
-                return $this->response->setStatusCode(404)->setJSON([
-                    'status'  => false,
-                    'message' => 'Data Mobil Tidak Tersedia',
+                return $this->response->setStatusCode(200)->setJSON([
+                    'status'  => true,
+                    'message' => 'Data transaksi Tidak Tersedia',
                     'data'    => [],
                 ]);
             }
@@ -50,7 +101,7 @@ class SalesController extends BaseController
             'user_id'           => 'required',
             'total_harga'       => 'required',
             'jumlah_bayar'      => 'required',
-            'metode_pembayaran' => 'required|in_list[cash,transfer]',
+            'metode_pembayaran' => 'required|in_list[Cash,Transfer]',
         ];
 
         $errors = [
@@ -75,7 +126,7 @@ class SalesController extends BaseController
         $total_harga  = esc($this->request->getVar('total_harga'));
         $jumlah_bayar = esc($this->request->getVar('jumlah_bayar'));
 
-        $status_pembayaran = ($jumlah_bayar >= $total_harga) ? 'paid' : 'pending';
+        $status_pembayaran = ($jumlah_bayar >= $total_harga) ? 'selesai' : 'proses';
 
         $datapenjualan = [
             'id'                => $id,
@@ -89,6 +140,21 @@ class SalesController extends BaseController
 
         try {
             $penjualan_id = $this->penjualan->insert($datapenjualan, true);
+
+            // Ambil ID mobil dari request
+            $mobil_id = esc($this->request->getVar('mobil_id'));
+
+            // Ambil data mobil untuk cek stok
+            $mobil = $this->daftarmobil->find($mobil_id);
+
+            if (! $mobil || $mobil['stok'] <= 0) {
+                throw new Exception("Stok mobil tidak mencukupi");
+            }
+
+            // Kurangi stok mobil
+            $this->daftarmobil->update($mobil_id, [
+                'stok' => $mobil['stok'] - 1,
+            ]);
 
             if (! $penjualan_id) {
                 throw new Exception(" Gagal Menambahkan Data Penjualan ");
