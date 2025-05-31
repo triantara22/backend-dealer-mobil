@@ -5,6 +5,8 @@ use App\Controllers\BaseController;
 use App\Models\MobilModel;
 use App\Models\SpekModel;
 use CodeIgniter\API\ResponseTrait;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use Exception;
 
 class MobilController extends BaseController
@@ -47,9 +49,6 @@ class MobilController extends BaseController
     {
         try {
             $data = $this->modelmobil->getmobilwithid($id);
-            if (! empty($data['gambar'])) {
-                $data['gambar'] = base_url('uploads/' . $data['gambar']);
-            }
             if (empty($data)) {
                 return $this->response->setStatusCode(200)->setJSON([
                     'status'  => true,
@@ -210,10 +209,6 @@ class MobilController extends BaseController
             return $this->failNotFound('Data mobil tidak ditemukan');
         }
 
-        $gambarBaru = $this->request->getFile('gambar');
-        // log_message('debug', 'Uploaded file: ' . print_r($_FILES, true));
-        $isGambarUploaded = $gambarBaru && $gambarBaru->isValid() && ! $gambarBaru->hasMoved();
-
         // Validasi Form
         $rules = [
             'merek'            => 'required',
@@ -221,6 +216,7 @@ class MobilController extends BaseController
             'tahun'            => 'required|numeric|max_length[4]|min_length[4]',
             'harga'            => 'required|decimal',
             'stok'             => 'required|integer|max_length[11]',
+            'gambar'           => 'uploaded[gambar]|mime_in[gambar,image/jpg,image/jpeg,image/png]|max_size[gambar,2048]',
             'tipe_mesin'       => 'required|string',
             'tenaga'           => 'required|string',
             'torsi'            => 'required|string',
@@ -245,7 +241,8 @@ class MobilController extends BaseController
                 'required' => 'Kolom ini harus diisi dengan angka decimal!',
             ],
             'stok'             => [
-                'required' => 'Kolom ini harus diisi!',
+                'required'   => 'Kolom ini harus diisi!',
+                'is_natural' => 'Stock harus berupa angka bulat positif atau 0!',
             ],
             'gambar'           => [
                 'mime_in'  => 'File harus berupa gambar (JPG, JPEG, PNG)!',
@@ -277,36 +274,20 @@ class MobilController extends BaseController
             ],
         ];
 
-        // Tambahkan validasi file jika ada gambar baru
-        if ($isGambarUploaded) {
-            $rules['gambar'] = 'uploaded[gambar]|mime_in[gambar,image/jpg,image/jpeg,image/png]|max_size[gambar,2048]';
-        }
-
-        // Validasi semua sekaligus
+        // Validasi Form (biarkan sesuai yang kamu buat)
         if (! $this->validate($rules, $errors)) {
-            return $this->failValidationErrors(['message' => $this->validator->getErrors()]);
-        }
-
-        // Proses file gambar (jika ada)
-        if ($isGambarUploaded) {
-            $namaGambar = $gambarBaru->getRandomName();
-            $gambarBaru->move('uploads', $namaGambar);
-
-            // Hapus gambar lama jika ada
-            if (! empty($datamobil['gambar']) && file_exists('uploads' . $datamobil['gambar'])) {
-                unlink('uploads' . $datamobil['gambar']);
-            }
-        } else {
-            $namaGambar = $datamobil['gambar']; // gunakan gambar lama
+            $response = [
+                'message' => $this->validator->getErrors(),
+            ];
+            return $this->failValidationErrors($response);
         }
 
         $mobilData = [
-            'merek'  => esc($this->request->getVar('merek')),
-            'model'  => esc($this->request->getVar('model')),
-            'tahun'  => esc($this->request->getVar('tahun')),
-            'harga'  => esc($this->request->getVar('harga')),
-            'stok'   => esc((int) $this->request->getVar('stok')),
-            'gambar' => $namaGambar,
+            'merek' => esc($this->request->getVar('merek')),
+            'model' => esc($this->request->getVar('model')),
+            'tahun' => esc($this->request->getVar('tahun')),
+            'harga' => esc($this->request->getVar('harga')),
+            'stok'  => esc((int) $this->request->getVar('stok')),
         ];
 
         try {
@@ -350,7 +331,7 @@ class MobilController extends BaseController
         $mobilmodel = new MobilModel();
         $spekmodel  = new SpekModel();
 
-        $mobil = $mobilmodel->find($id);
+        $mobil = $this->modelmobil->find($id);
         if (! $mobil) {
             return $this->response->setStatusCode(404)->setJSON([
                 'status'  => false,
@@ -359,33 +340,17 @@ class MobilController extends BaseController
             ]);
         }
 
-        // Hapus file gambar jika ada
-        if (! empty($mobil['gambar'])) {
-            $gambarPath = FCPATH . 'uploads/' . $mobil['gambar'];
-            if (file_exists($gambarPath)) {
-                unlink($gambarPath);
-            } else {
-                log_message('debug', 'File tidak ditemukan: ' . $gambarPath);
-            }
+        if (! empty($mobil->gambar)) {
+            $file = 'uploads/' . $mobil->gambar;
+        }
+        if (is_file($file)) {
+            unlink($file);
         }
 
-        // Hapus data spesifikasi terkait
         $spekmodel->where('id_mobil', $id)->delete();
 
-        // Hapus data mobil
-        $deleteResult = $mobilmodel->delete($id);
-
-        if (! $deleteResult) {
-            log_message('error', 'Gagal delete mobil ID: ' . $id);
-            return $this->response->setStatusCode(500)->setJSON([
-                'status'  => false,
-                'message' => 'Gagal menghapus data mobil',
-                'data'    => [],
-            ]);
-        }
-
-        return $this->response->setStatusCode(200)->setJSON([
-            'status'  => true,
+        $mobilmodel->delete($id);
+        return $this->respondDeleted([
             'message' => 'Data Berhasil Dihapus',
             'data'    => [],
         ]);
@@ -393,7 +358,7 @@ class MobilController extends BaseController
 
     public function ambildatafilter()
     {
-        $datafilter = $this->modelmobil->getmobil();
+        $datafilter = $this->modelmobil->getmerekhargatahun();
         return $this->respond([
             'status'  => true,
             'message' => 'Data Berhasil diambil',
