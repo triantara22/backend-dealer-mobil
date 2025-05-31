@@ -147,12 +147,9 @@ class PenjualanController extends BaseController
     public function update($id)
     {
         $rules = [
-            'pelanggan_id'      => 'required',
-            'mobil_id'          => 'required',
-            'user_id'           => 'required',
-            'total_harga'       => 'required',
-            'jumlah_bayar'      => 'required',
-            'metode_pembayaran' => 'required|in_list[cash,transfer]',
+            'status_pembayaran' => 'permit_empty',
+            'jumlah_bayar'      => 'permit_empty|numeric',
+            'metode_pembayaran' => 'permit_empty|in_list[cash,transfer]',
         ];
 
         $errors = [
@@ -228,16 +225,34 @@ class PenjualanController extends BaseController
         }
     }
 
-    public function filterpembayaran($id)
+    public function filterpembayaran($penjualan_id)
     {
-        $data = $this->pembayaran->filterpembayaran($id);
+        $data = $this->pembayaran->filterpembayaran($penjualan_id);
 
         if ($data) {
-            return $this->response->setJSON($data);
+            return $this->respond([
+                'status'  => true,
+                'message' => 'Data Berhasil Ditemukan',
+                'data'    => [
+                    $data,
+                ],
+            ]);
         } else {
             return $this->response->setStatusCode(404)
                 ->setJSON(["message" => "Data Tidak Ditemukan"]);
         }
     }
 
+
+        public function ambildatafilter()
+    {
+        $datafilter = $this->penjualan->getpenjualan();
+        return $this->respond([
+            'status'  => true,
+            'message' => 'Data Berhasil diambil',
+            'data'    => [
+                $datafilter,
+            ],
+        ]);
+    }
 }

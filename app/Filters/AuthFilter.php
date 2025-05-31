@@ -5,7 +5,6 @@ use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
-use Config\Services;
 use Exception;
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
@@ -34,17 +33,17 @@ class AuthFilter implements FilterInterface
 
     public function before(RequestInterface $request, $arguments = null)
     {
-        $this->response = Services::response();
+        if ($request->getMethod(true) === 'OPTIONS') {
+            return null;
+        }
 
         $key    = getenv('token_secret');
         $header = $request->getServer('HTTP_AUTHORIZATION');
 
-        // 1. Check for Authorization header
         if (! $header) {
             return $this->failUnauthorized('Token required');
         }
 
-        // 2. Extract token from header
         $tokenParts = explode(' ', $header);
         if (count($tokenParts) !== 2 || $tokenParts[0] !== 'Bearer') {
             return $this->failUnauthorized('Format token tidak valid. Gunakan: Bearer <token>');
@@ -52,15 +51,16 @@ class AuthFilter implements FilterInterface
         $token = $tokenParts[1];
 
         try {
-            // 3. Decode and validate token
             $decoded = JWT::decode($token, new Key($key, 'HS256'));
 
-            // 4. Check role claim
-            if (! isset($decoded->data->role) || $decoded->data->role !== 'admin') {
-                throw new Exception('Akses ditolak: Hanya admin yang diizinkan');
+            // Check role based on arguments
+            if (isset($arguments[0])) {
+                $requiredRole = $arguments[0];
+                if (! isset($decoded->data->role) || $decoded->data->role !== $requiredRole) {
+                    throw new Exception('Akses ditolak: Role tidak sesuai');
+                }
             }
 
-            // 5. Store user data in request
             $request->user = $decoded->data;
 
         } catch (ExpiredException $e) {

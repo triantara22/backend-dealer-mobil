@@ -47,7 +47,7 @@ class LoginController extends BaseController
         // Payload JWT
         $payload = [
             'iat'  => time(),
-            'exp'  => time() + 3600,
+            // 'exp'  => time() + 3600,
             'data' => [
                 'id'       => $user['id'],
                 'username' => $user['username'],
@@ -62,6 +62,7 @@ class LoginController extends BaseController
         return $this->respond([
             'message' => 'Login berhasil',
             'token'   => $token,
+            'data'    => $user,
         ]);
     }
 }

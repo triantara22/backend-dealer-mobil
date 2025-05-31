@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use CodeIgniter\Model;
@@ -16,15 +15,23 @@ class PembayaranModel extends Model
 
     public function getpembayaran()
     {
-        return $this->select('pembayaran.*, penjualan.pelanggan_id, penjualan.mobil_id,penjualan.tanggal_transaksi')
+        return $this->select('pembayaran.*, penjualan.pelanggan_id, penjualan.mobil_id,
+        penjualan.tanggal_transaksi, pelanggan.nama AS nama_pelanggan, mobil.model AS model_mobil , mobil.merek')
             ->join('penjualan', 'pembayaran.penjualan_id = penjualan.id')
+            ->join('pelanggan', 'penjualan.pelanggan_id = pelanggan.id')
+            ->join('mobil', 'penjualan.mobil_id = mobil.id')
             ->findAll();
     }
-    public function filterpembayaran($id)
+
+    public function filterpembayaran($penjualan_id)
     {
-        return $this->select('pembayaran.*, penjualan.pelanggan_id, penjualan.mobil_id,penjualan.tanggal_transaksi')
+        return $this->select('pembayaran.*, penjualan.pelanggan_id, penjualan.mobil_id, penjualan.tanggal_transaksi,
+    pelanggan.nama AS nama_pelanggan, mobil.model AS model_mobil, mobil.merek')
             ->join('penjualan', 'pembayaran.penjualan_id = penjualan.id')
-            ->like('penjualan_id', $id)
+            ->join('pelanggan', 'penjualan.pelanggan_id = pelanggan.id')
+            ->join('mobil', 'penjualan.mobil_id = mobil.id')
+            ->like('penjualan_id', $penjualan_id)
             ->findAll();
     }
+
 }
