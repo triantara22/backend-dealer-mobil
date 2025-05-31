@@ -243,4 +243,16 @@ class PenjualanController extends BaseController
         }
     }
 
+
+        public function ambildatafilter()
+    {
+        $datafilter = $this->penjualan->getpenjualan();
+        return $this->respond([
+            'status'  => true,
+            'message' => 'Data Berhasil diambil',
+            'data'    => [
+                $datafilter,
+            ],
+        ]);
+    }
 }

@@ -42,6 +42,7 @@ $routes->group('', ['filter' => 'Auth:admin'], function ($routes) {
     $routes->post('/penjualan/create', 'PenjualanController::Create');
     $routes->put('/penjualan/update/(:segment)', 'PenjualanController::update/$1');
     $routes->get('/penjualan/filter/(:any)', 'PenjualanController::filter/$1');
+    $routes->get('/penjualan/all', 'PenjualanController::ambildatafilter');
     // pembayaran routes
     $routes->get('/pembayaran', 'PenjualanController::pembayaran');
     $routes->get('/pembayaran/filter/(:segment)', 'PenjualanController::filterpembayaran/$1');
