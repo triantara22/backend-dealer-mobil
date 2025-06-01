@@ -6,20 +6,20 @@ use CodeIgniter\Model;
 class GaransiModel extends Model
 {
     protected $table            = 'garansi';
-    protected $primaryKey       = 'id';
+    protected $primaryKey       = 'idg';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['id', 'mobil_id', 'pelanggan_id', 'tanggal_mulai', 'tanggal_berakhir', 'detail_garansi', 'klaim_status'];
+    protected $allowedFields    = ['idg', 'mobil_id', 'pelanggan_id', 'tanggal_mulai', 'tanggal_berakhir', 'detail_garansi', 'klaim_status'];
 
     public function getdatagaransi()
     {
-        return $this->select('garansi.id,mobil_id,garansi.pelanggan_id,garansi.tanggal_mulai,garansi.tanggal_berakhir,
+        return $this->select('garansi.idg,mobil_id,garansi.pelanggan_id,garansi.tanggal_mulai,garansi.tanggal_berakhir,
         garansi.detail_garansi,garansi.klaim_status, mobil.model, pelanggan.nama')
             ->join('mobil', 'garansi.mobil_id = mobil.id')
             ->join('pelanggan', 'garansi.pelanggan_id = pelanggan.id')
-            ->orderBy('garansi.id', 'DESC')
+            ->orderBy('garansi.tanggal_mulai', 'DESC')
             ->findall();
     }
 
@@ -28,7 +28,7 @@ class GaransiModel extends Model
         return $this->select('garansi.*, mobil.model, pelanggan.nama')
             ->join('mobil', 'garansi.mobil_id = mobil.id')
             ->join('pelanggan', 'garansi.pelanggan_id = pelanggan.id')
-            ->orderBy('garansi.id', 'DESC')
+            ->orderBy('garansi.tanggal_mulai', 'DESC')
             ->find($id);
     }
     public function filter($nama, $klaim_status)
@@ -42,18 +42,18 @@ class GaransiModel extends Model
             ->findall();
     }
 
-    public function generateId()
+    public function generateIdg()
     {
         $prefix = 'DGI-D'; // Awalan yang diinginkan
 
         // Cari transaksi terakhir dengan awalan PJN-
-        $lastTransaction = $this->like('id', $prefix, 'after')
-            ->orderBy('id', 'DESC')
+        $lastTransaction = $this->like('idg', $prefix, 'after')
+            ->orderBy('idg', 'DESC')
             ->first();
 
         if ($lastTransaction) {
             // Ambil angka setelah prefix
-            $lastNumber = (int) str_replace($prefix, '', $lastTransaction['id']);
+            $lastNumber = (int) str_replace($prefix, '', $lastTransaction['idg']);
             $nextNumber = $lastNumber + 1;
         } else {
             // Jika tidak ada transaksi, mulai dari 1

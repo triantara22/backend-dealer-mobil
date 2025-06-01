@@ -71,9 +71,9 @@ $routes->group('', ['filter' => 'Auth:admin'], function ($routes) {
     $routes->put('/garansi/update/(:segment)', 'Garansi::update/$1');
     $routes->delete('/garansi/delete/(:segment)', 'Garansi::delete/$1');
 
-    $routes->get('/klaimgaransi', 'Garansi::index');
-    $routes->get('/klaimgaransi/filter/(:any)', 'Garansi::filter/$1');
-    $routes->put('/klaimgaransi/update/(:segment)', 'Garansi::update/$1');
+    $routes->get('/klaimgaransi', 'Garansi::klaimgaransi');
+    $routes->get('/klaimgaransi/filter/(:any)', 'Garansi::filterklaim/$1');
+    $routes->put('/klaimgaransi/update/(:segment)', 'Garansi::updateklaim/$1');
 });
 
 $routes->group('', ['filter' => 'Auth:sales'], function ($routes) {

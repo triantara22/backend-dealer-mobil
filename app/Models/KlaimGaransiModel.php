@@ -16,7 +16,7 @@ class KlaimGaransiModel extends Model
     public function getklaimgaransi()
     {
         return $this->select('klaimgaransi.*, garansi.pelanggan_id, garansi.mobil_id, garansi.klaim_status, mobil.model, pelanggan.nama')
-            ->join('garansi', 'klaimgaransi.garansi_id = garansi.id')
+            ->join('garansi', 'klaimgaransi.garansi_id = garansi.idg')
             ->join('pelanggan', 'garansi.pelanggan_id = pelanggan.id')
             ->join('mobil', 'garansi.mobil_id = mobil.id')
             ->orderBy('klaimgaransi.idklaim', 'DESC')
