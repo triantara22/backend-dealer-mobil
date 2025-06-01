@@ -1,13 +1,12 @@
 <?php
-
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-use CodeIgniter\HTTP\ResponseInterface;
-use CodeIgniter\API\ResponseTrait;
 use App\Models\PelangganModel;
 use App\Models\PenjualanModel;
+use CodeIgniter\API\ResponseTrait;
 use Exception;
+
 class Salespelanggan extends BaseController
 {
     protected $pelangganmodel;
@@ -43,4 +42,25 @@ class Salespelanggan extends BaseController
             ]);
         }
     }
+    public function create()
+    {
+        $id            = $this->pelangganmodel->generateTransactionId();
+        $datapelanggan = [
+            'id'      => $id,
+            'nama'    => $this->request->getVar('nama'),
+            'alamat'  => $this->request->getVar('alamat'),
+            'telepon' => $this->request->getVar('telepon'),
+            'email'   => $this->request->getVar('email'),
+        ];
+
+        $this->pelangganmodel->insert($datapelanggan, true);
+        return $this->respondCreated([
+            'status'  => true,
+            'message' => 'Data Berhasil Ditambahkan',
+            'data'    => [
+                $datapelanggan,
+            ],
+        ]);
+    }
+
 }
