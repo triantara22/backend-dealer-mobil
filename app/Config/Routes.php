@@ -88,16 +88,25 @@ $routes->group('', ['filter' => 'Auth:sales'], function ($routes) {
 
 });
 
-$routes->group('', ['filter' => 'Auth:costumer service'], function ($routes) {
+$routes->group('', ['filter' => 'Auth:customer service'], function ($routes) {
 
-    $routes->get('/cslayanan', 'CsLayanan::index');
-    $routes->get('/cslayanan/filter/(:any)', 'CsLayanan::filter/$1');
-    $routes->post('/cslayanan/create', 'CsLayanan::create');
-    $routes->put('/cslayanan/update/(:segment)', 'CsLayanan::update/$1');
-    $routes->delete('/cslayanan/delete/(:segment)', 'CsLayanan::delete/$1');
 
-    $routes->get('/csgaransi', 'Csgaransi::index');
-    $routes->get('/csgaransi/filter/(:any)', 'Csgaransi::filter/$1');
-    $routes->get('/csgaransi/detail/(:segment)', 'Csgaransi::detail/$1');
-    $routes->post('/csgaransi/create', 'Csgaransi::create');
+    $routes->get('/dashboard', 'Dashboardcs::index');
+    $routes->get('/dashboard/chart', 'Dashboardcs::grafikLayanan');
+    $routes->get('/cslayanan', 'Cslayanan::index');
+    $routes->get('/cslayanan/datamobil', 'Cslayanan::getmobil');
+    $routes->get('/cslayanan/datapelanggan', 'Cslayanan::getpelanggan');
+    $routes->get('/cslayanan/filter/(:any)', 'Cslayanan::filter/$1');
+    $routes->post('/cslayanan/create', 'Cslayanan::create');
+    $routes->put('/cslayanan/update/(:segment)', 'Cslayanan::update/$1');
+    $routes->delete('/cslayanan/delete/(:segment)', 'Cslayanan::delete/$1');
+
+    $routes->get('/csgaransi', 'CsGaransi::index');
+    $routes->get('/csgaransi/filter/(:any)', 'CsGaransi::filter/$1');
+    $routes->post('/csgaransi/create', 'CsGaransi::create');
+
+    $routes->get('/csklaimgaransi', 'CsKlaimGaransi::index');
+    $routes->get('/csklaimgaransi/filter/(:any)', 'CsKlaimGaransi::filter/$1');
+    $routes->post('/csklaimgaransi/create', 'CsKlaimGaransi::ajukanklaim');
+
 });

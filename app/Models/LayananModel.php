@@ -32,6 +32,15 @@ class LayananModel extends Model
             ->like('mobil.model', $model)
             ->findall();
     }
+    public function filtercs($nama, $model)
+    {
+        return $this->select('services.*, pelanggan.nama, mobil.model')
+            ->join('pelanggan', 'services.pelanggan_id = pelanggan.id')
+            ->join('mobil', 'services.mobil_id = mobil.id')
+            ->like('pelanggan.nama', $nama)
+            ->like('mobil.model', $model)
+            ->findall();
+    }
 
     public function generateId()
     {

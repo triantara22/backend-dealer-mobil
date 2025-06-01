@@ -11,7 +11,7 @@ class GaransiModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['id', 'mobil_id', 'pelanggan_id', 'tanggal_mulai', 'tanggal_berakhir', 'detail_garansi', 'klaim_status', 'klaim_deskripsi', 'tanggal'];
+    protected $allowedFields    = ['id', 'mobil_id', 'pelanggan_id', 'tanggal_mulai', 'tanggal_berakhir', 'detail_garansi', 'klaim_status'];
 
     public function getdatagaransi()
     {
@@ -21,23 +21,6 @@ class GaransiModel extends Model
             ->join('pelanggan', 'garansi.pelanggan_id = pelanggan.id')
             ->orderBy('garansi.id', 'DESC')
             ->findall();
-    }
-
-    public function getklaimgaransi()
-    {
-        return $this->select('garansi.id,mobil_id,garansi.pelanggan_id,mobil.model, pelanggan.nama')
-            ->join('mobil', 'garansi.mobil_id = mobil.id')
-            ->join('pelanggan', 'garansi.pelanggan_id = pelanggan.id')
-            ->orderBy('garansi.id', 'DESC')
-            ->findall();
-    }
-    public function getklaimgaransiwithid($id)
-    {
-        return $this->select('garansi.id,mobil_id,garansi.pelanggan_id,mobil.model, pelanggan.nama')
-            ->join('mobil', 'garansi.mobil_id = mobil.id')
-            ->join('pelanggan', 'garansi.pelanggan_id = pelanggan.id')
-            ->orderBy('garansi.id', 'DESC')
-            ->find($id);
     }
 
     public function getdatagaransiid($id)
