@@ -82,14 +82,14 @@ $routes->group('', ['filter' => 'Auth:sales'], function ($routes) {
     $routes->post('/salespenjualan/create', 'SalesController::Create');
     $routes->get('/salespenjualan/filter', 'SalesController::filter');
 
-    // pembayaran
+    $routes->get('/salesdashboard', 'Dashboardsales::index');
     $routes->get('/salespelanggan', 'Salespelanggan::index');
+    $routes->post('/salespelanggan/create', 'Salespelanggan::create');
     $routes->get('/salespelanggan/filter/(:segment)', 'Salespelanggan::filtersales/$1');
 
 });
 
 $routes->group('', ['filter' => 'Auth:customer service'], function ($routes) {
-
 
     $routes->get('/dashboard', 'Dashboardcs::index');
     $routes->get('/dashboard/chart', 'Dashboardcs::grafikLayanan');
