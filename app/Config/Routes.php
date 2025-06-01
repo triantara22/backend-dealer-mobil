@@ -74,6 +74,9 @@ $routes->group('', ['filter' => 'Auth:admin'], function ($routes) {
     $routes->get('/klaimgaransi', 'Garansi::klaimgaransi');
     $routes->get('/klaimgaransi/filter/(:any)', 'Garansi::filterklaim/$1');
     $routes->put('/klaimgaransi/update/(:segment)', 'Garansi::updateklaim/$1');
+    
+    $routes->post('/gantipw', 'LoginController::changePassword');
+
 });
 
 $routes->group('', ['filter' => 'Auth:sales'], function ($routes) {
@@ -89,6 +92,7 @@ $routes->group('', ['filter' => 'Auth:sales'], function ($routes) {
     $routes->post('/salespelanggan/create', 'Salespelanggan::create');
     $routes->get('/salespelanggan/filter/(:segment)', 'Salespelanggan::filtersales/$1');
 
+    $routes->post('/gantipw', 'LoginController::changePassword');
 });
 
 $routes->group('', ['filter' => 'Auth:customer service'], function ($routes) {
@@ -111,4 +115,5 @@ $routes->group('', ['filter' => 'Auth:customer service'], function ($routes) {
     $routes->get('/csklaimgaransi/filter/(:any)', 'CsKlaimGaransi::filter/$1');
     $routes->post('/csklaimgaransi/create', 'CsKlaimGaransi::ajukanklaim');
 
+    $routes->post('/gantipw', 'LoginController::changePassword');
 });
