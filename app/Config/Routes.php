@@ -25,6 +25,8 @@ $routes->options('/login', 'LoginController::login');
 // $routes->get('/mobil', 'MobilController::index');
 
 $routes->group('', ['filter' => 'Auth:admin'], function ($routes) {
+
+    $routes->get('/admindashboard', 'Dashboardadmin::index');
     // mobil
     $routes->get('/mobil', 'MobilController::index');
     $routes->get('/mobil/detail/(:num)', 'MobilController::detail/$1');
