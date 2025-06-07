@@ -3,7 +3,6 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\GaransiModel;
-use App\Models\KlaimGaransiModel;
 use CodeIgniter\API\ResponseTrait;
 use Exception;
 
@@ -13,7 +12,7 @@ class CsGaransi extends BaseController
     use ResponseTrait;
     public function __construct()
     {
-        $this->garansimodel      = new GaransiModel();
+        $this->garansimodel = new GaransiModel();
     }
     public function index()
     {
@@ -42,15 +41,15 @@ class CsGaransi extends BaseController
 
     public function create()
     {
-        $id          = $this->garansimodel->generateId();
+        $id          = $this->garansimodel->generateIdg();
         $datagaransi = [
-            'id'               => $id,
+            'idg'              => $id,
             'pelanggan_id'     => esc($this->request->getVar('pelanggan_id')),
             'mobil_id'         => esc($this->request->getVar('mobil_id')),
             'tanggal_mulai'    => esc($this->request->getVar('tanggal_mulai')),
             'tanggal_berakhir' => esc($this->request->getVar('tanggal_berakhir')),
             'detail_garansi'   => esc($this->request->getVar('detail_garansi')),
-            'klaim_status'     => esc($this->request->getVar('klaim_status')),
+            // 'klaim_status'     => esc($this->request->getVar('klaim_status')),
         ];
 
         $this->garansimodel->insert($datagaransi, true);
