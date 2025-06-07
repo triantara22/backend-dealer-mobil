@@ -204,17 +204,14 @@ class MobilController extends BaseController
 
     public function update($id)
     {
-        // Ambil data mobil berdasarkan ID
         $datamobil = $this->modelmobil->find($id);
         if (! $datamobil) {
             return $this->failNotFound('Data mobil tidak ditemukan');
         }
 
-        $gambarBaru = $this->request->getFile('gambar');
-        // log_message('debug', 'Uploaded file: ' . print_r($_FILES, true));
+        $gambarBaru       = $this->request->getFile('gambar');
         $isGambarUploaded = $gambarBaru && $gambarBaru->isValid() && ! $gambarBaru->hasMoved();
 
-        // Validasi Form
         $rules = [
             'merek'            => 'required',
             'model'            => 'required|string',
@@ -231,95 +228,23 @@ class MobilController extends BaseController
             'ac'               => 'required|string',
         ];
 
-        $errors = [
-            'merek'            => [
-                'required' => 'Kolom ini harus diisi!',
-            ],
-            'model'            => [
-                'required' => 'Kolom ini harus diisi!',
-            ],
-            'tahun'            => [
-                'required' => 'Kolom ini harus diisi dengan 4 angka!',
-            ],
-            'harga'            => [
-                'required' => 'Kolom ini harus diisi dengan angka decimal!',
-            ],
-            'stok'             => [
-                'required' => 'Kolom ini harus diisi!',
-            ],
-            'gambar'           => [
-                'mime_in'  => 'File harus berupa gambar (JPG, JPEG, PNG)!',
-                'max_size' => 'Ukuran file gambar maksimal 2MB!',
-            ],
-            'tipe_mesin'       => [
-                'required' => 'Kolom ini harus diisi!',
-            ],
-            'tenaga'           => [
-                'required' => 'Kolom ini harus diisi!',
-            ],
-            'torsi'            => [
-                'required' => 'Kolom ini harus diisi!',
-            ],
-            'sistem_penggerak' => [
-                'required' => 'Kolom ini harus diisi!',
-            ],
-            'fitur_keamanan'   => [
-                'required' => 'Kolom ini harus diisi!',
-            ],
-            'sistem_hiburan'   => [
-                'required' => 'Kolom ini harus diisi!',
-            ],
-            'konektivitas'     => [
-                'required' => 'Kolom ini harus diisi!',
-            ],
-            'ac'               => [
-                'required' => 'Kolom ini harus diisi!',
-            ],
-        ];
-
-        // Tambahkan validasi file jika ada gambar baru
         if ($isGambarUploaded) {
             $rules['gambar'] = 'uploaded[gambar]|mime_in[gambar,image/jpg,image/jpeg,image/png]|max_size[gambar,2048]';
         }
 
-        // Validasi semua sekaligus
-        if (! $this->validate($rules, $errors)) {
+        if (! $this->validate($rules)) {
             return $this->failValidationErrors(['message' => $this->validator->getErrors()]);
         }
 
-        // Proses file gambar (jika ada)
         if ($isGambarUploaded) {
             $namaGambar = $gambarBaru->getRandomName();
             $gambarBaru->move('uploads', $namaGambar);
 
-            // Hapus gambar lama jika ada
-            if (! empty($datamobil['gambar']) && file_exists('uploads' . $datamobil['gambar'])) {
-                unlink('uploads' . $datamobil['gambar']);
+            if (! empty($datamobil['gambar']) && file_exists('uploads/' . $datamobil['gambar'])) {
+                unlink('uploads/' . $datamobil['gambar']);
             }
         } else {
-            $namaGambar = $datamobil['gambar']; // gunakan gambar lama
-        }
-        // Tambahkan validasi file jika ada gambar baru
-        if ($isGambarUploaded) {
-            $rules['gambar'] = 'uploaded[gambar]|mime_in[gambar,image/jpg,image/jpeg,image/png]|max_size[gambar,2048]';
-        }
-
-        // Validasi semua sekaligus
-        if (! $this->validate($rules, $errors)) {
-            return $this->failValidationErrors(['message' => $this->validator->getErrors()]);
-        }
-
-        // Proses file gambar (jika ada)
-        if ($isGambarUploaded) {
-            $namaGambar = $gambarBaru->getRandomName();
-            $gambarBaru->move('uploads', $namaGambar);
-
-            // Hapus gambar lama jika ada
-            if (! empty($datamobil['gambar']) && file_exists('uploads' . $datamobil['gambar'])) {
-                unlink('uploads' . $datamobil['gambar']);
-            }
-        } else {
-            $namaGambar = $datamobil['gambar']; // gunakan gambar lama
+            $namaGambar = $datamobil['gambar'];
         }
 
         $mobilData = [
@@ -353,10 +278,7 @@ class MobilController extends BaseController
             return $this->respond([
                 'status'  => true,
                 'message' => 'Data Berhasil Diupdate',
-                'data'    => [
-                    $mobilData,
-                    $spekData,
-                ],
+                'data'    => [$mobilData, $spekData],
             ]);
         } catch (\Exception $e) {
             return $this->response->setStatusCode(500)->setJSON([
@@ -367,7 +289,7 @@ class MobilController extends BaseController
         }
     }
 
-        public function delete($id)
+    public function delete($id)
     {
         $mobilmodel = new MobilModel();
         $spekmodel  = new SpekModel();
