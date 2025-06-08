@@ -5,6 +5,7 @@ use App\Controllers\BaseController;
 use App\Models\PembayaranModel;
 use App\Models\PenjualanModel;
 use CodeIgniter\API\ResponseTrait;
+use Dompdf\Dompdf;
 use Exception;
 
 class PenjualanController extends BaseController
@@ -209,7 +210,7 @@ class PenjualanController extends BaseController
         }
     }
 
-        public function delete($id)
+    public function delete($id)
     {
         $this->penjualan->delete($id);
         return $this->respondDeleted([
@@ -253,8 +254,7 @@ class PenjualanController extends BaseController
         }
     }
 
-
-        public function ambildatafilter()
+    public function ambildatafilter()
     {
         $datafilter = $this->penjualan->getpenjualan();
         return $this->respond([
@@ -265,4 +265,43 @@ class PenjualanController extends BaseController
             ],
         ]);
     }
+
+    public function laporan()
+    {
+        $model = new PenjualanModel();
+        $data  = $model->getLaporanPenjualan();
+
+        return $this->response->setJSON([
+            'data'             => $data,
+            'total_jumlah'     => array_sum(array_column($data, 'jumlah_terjual')),
+            'total_pendapatan' => array_sum(array_column($data, 'total_pendapatan')),
+        ]);
+    }
+
+    public function cetakpdf()
+    {
+        $penjualanModel = new PenjualanModel();
+        $data           = $penjualanModel->getLaporanPenjualan();
+
+        $total_jumlah     = array_sum(array_column($data, 'jumlah_terjual'));
+        $total_pendapatan = array_sum(array_column($data, 'total_pendapatan'));
+
+        $html = view('laporan_pdf', [
+            'laporan'          => $data,
+            'total_jumlah'     => $total_jumlah,
+            'total_pendapatan' => $total_pendapatan,
+        ]);
+
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        return $this->response
+        // ->setHeader('Access-Control-Allow-Origin', '*') // Jika FE dan BE terpisah
+            ->setHeader('Content-Type', 'application/pdf')
+            ->setHeader('Content-Disposition', 'inline; filename="laporan-penjualan.pdf"')
+            ->setBody($dompdf->output());
+    }
+
 }
