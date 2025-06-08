@@ -34,7 +34,7 @@ class PenjualanModel extends Model
             ->orderBy('penjualan.tanggal_transaksi', 'DESC')
             ->findAll();
 
-    }  
+    }
     public function getpenjualanwithid($id)
     {
         return $this->select('penjualan.*, pelanggan.nama, mobil.model')
@@ -51,6 +51,14 @@ class PenjualanModel extends Model
             ->like('penjualan.tanggal_transaksi', $tanggaltr)
             ->like('mobil.merek', $namamobil)
             ->like('penjualan.status_pembayaran', $status)
+            ->findAll();
+    }
+
+    public function getLaporanPenjualan()
+    {
+        return $this->select('mobil.merek, mobil.model, COUNT(penjualan.id) as jumlah_terjual, SUM(total_harga) as total_pendapatan')
+            ->join('mobil', 'penjualan.mobil_id = mobil.id')
+            ->groupBy('mobil.merek, mobil.model')
             ->findAll();
     }
 
