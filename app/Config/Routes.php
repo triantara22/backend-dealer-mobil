@@ -53,6 +53,7 @@ $routes->group('', ['filter' => 'Auth:admin'], function ($routes) {
     $routes->delete('/penjualan/delete/(:segment)', 'PenjualanController::delete/$1');
     $routes->get('/penjualan/filter/(:any)', 'PenjualanController::filter/$1');
     $routes->get('/penjualan/all', 'PenjualanController::ambildatafilter');
+    
     // pembayaran routes
     $routes->get('/pembayaran', 'PenjualanController::pembayaran');
     $routes->get('/pembayaran/filter/(:segment)', 'PenjualanController::filterpembayaran/$1');
@@ -95,6 +96,8 @@ $routes->group('', ['filter' => 'Auth:sales'], function ($routes) {
     $routes->get('/salespelanggan', 'Salespelanggan::index');
     $routes->post('/salespelanggan/create', 'Salespelanggan::create');
     $routes->get('/salespelanggan/filter/(:segment)', 'Salespelanggan::filtersales/$1');
+
+    $routes->put('/salespelanggan/konnfirmasi/(:segment)', 'Salespelanggan::konfirmasi/$1');
 
     $routes->post('/salesgantipw', 'LoginController::changePassword');
 });
