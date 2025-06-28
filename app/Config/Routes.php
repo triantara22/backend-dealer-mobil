@@ -53,7 +53,9 @@ $routes->group('', ['filter' => 'Auth:admin'], function ($routes) {
     $routes->delete('/penjualan/delete/(:segment)', 'PenjualanController::delete/$1');
     $routes->get('/penjualan/filter/(:any)', 'PenjualanController::filter/$1');
     $routes->get('/penjualan/all', 'PenjualanController::ambildatafilter');
-    
+
+    $routes->put('/penjualan/konfirmasi/(:segment)', 'PenjualanController::konfirmasi/$1');
+
     // pembayaran routes
     $routes->get('/pembayaran', 'PenjualanController::pembayaran');
     $routes->get('/pembayaran/filter/(:segment)', 'PenjualanController::filterpembayaran/$1');
@@ -76,7 +78,7 @@ $routes->group('', ['filter' => 'Auth:admin'], function ($routes) {
     $routes->get('/klaimgaransi', 'Garansi::klaimgaransi');
     $routes->get('/klaimgaransi/filter/(:any)', 'Garansi::filterklaim/$1');
     $routes->put('/klaimgaransi/update/(:segment)', 'Garansi::updateklaim/$1');
-    
+
     $routes->get('/laporanpenjualan', 'PenjualanController::laporan');
     $routes->get('/laporan/pdf', 'PenjualanController::cetakpdf');
 

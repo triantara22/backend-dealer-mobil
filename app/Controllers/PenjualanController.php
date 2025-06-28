@@ -304,4 +304,18 @@ class PenjualanController extends BaseController
             ->setBody($dompdf->output());
     }
 
+
+    public function konfirmasi($id){
+        // $penjualan = this->penjualan->find($id);
+
+        $this->penjualan->update($id,[
+            'status_pembayaran' => "selesai"
+        ]);
+        return $this->response->setStatusCode(200)
+        ->setJSON([
+            "status"  => true,
+            "message" => "Status Berhasil Dikonfirmasi",
+        ]);
+    }
+
 }
