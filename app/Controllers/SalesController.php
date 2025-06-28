@@ -68,6 +68,8 @@ class SalesController extends BaseController
             ]);
         }
     }
+
+
     public function index()
     {
         try {
@@ -125,8 +127,15 @@ class SalesController extends BaseController
 
         $total_harga  = esc($this->request->getVar('total_harga'));
         $jumlah_bayar = esc($this->request->getVar('jumlah_bayar'));
+        $metode       = esc($this->request->getVar('metode_pembayaran'));
 
-        $status_pembayaran = ($jumlah_bayar >= $total_harga) ? 'selesai' : 'proses';
+        if ($metode == "Cash" && $jumlah_bayar == $total_harga) {
+            $status_pembayaran = "selesai";
+        } elseif ($metode == "Transfer" && $jumlah_bayar == $total_harga) {
+            $status_pembayaran = "proses";
+        } else {
+            $status_pembayaran = "batal";
+        }
 
         $datapenjualan = [
             'id'                => $id,
@@ -204,4 +213,16 @@ class SalesController extends BaseController
         }
     }
 
+    // public function konfirmasi($id){
+    //     // $penjualan = this->penjualan->find($id);
+
+    //     $this->penjualan->update($id,[
+    //         'status_pembayaran' => "selesai"
+    //     ]);
+    //     return $this->response->setStatusCode(200)
+    //     ->setJSON([
+    //         "status"  => true,
+    //         "message" => "Status Berhasil Dikonfirmasi",
+    //     ]);
+    // }
 }

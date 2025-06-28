@@ -53,6 +53,7 @@ $routes->group('', ['filter' => 'Auth:admin'], function ($routes) {
     $routes->delete('/penjualan/delete/(:segment)', 'PenjualanController::delete/$1');
     $routes->get('/penjualan/filter/(:any)', 'PenjualanController::filter/$1');
     $routes->get('/penjualan/all', 'PenjualanController::ambildatafilter');
+    
     // pembayaran routes
     $routes->get('/pembayaran', 'PenjualanController::pembayaran');
     $routes->get('/pembayaran/filter/(:segment)', 'PenjualanController::filterpembayaran/$1');
@@ -79,6 +80,8 @@ $routes->group('', ['filter' => 'Auth:admin'], function ($routes) {
     $routes->get('/laporanpenjualan', 'PenjualanController::laporan');
     $routes->get('/laporan/pdf', 'PenjualanController::cetakpdf');
 
+    $routes->post('/gantipw', 'LoginController::changePassword');
+
 });
 
 $routes->group('', ['filter' => 'Auth:sales'], function ($routes) {
@@ -94,7 +97,9 @@ $routes->group('', ['filter' => 'Auth:sales'], function ($routes) {
     $routes->post('/salespelanggan/create', 'Salespelanggan::create');
     $routes->get('/salespelanggan/filter/(:segment)', 'Salespelanggan::filtersales/$1');
 
-    // $routes->post('/gantipw', 'LoginController::changePassword');
+    $routes->put('/salespelanggan/konnfirmasi/(:segment)', 'Salespelanggan::konfirmasi/$1');
+
+    $routes->post('/salesgantipw', 'LoginController::changePassword');
 });
 
 $routes->group('', ['filter' => 'Auth:customer service'], function ($routes) {
@@ -117,5 +122,5 @@ $routes->group('', ['filter' => 'Auth:customer service'], function ($routes) {
     $routes->get('/csklaimgaransi/filter/(:any)', 'CsKlaimGaransi::filter/$1');
     $routes->post('/csklaimgaransi/create', 'CsKlaimGaransi::ajukanklaim');
 
-    // $routes->post('/csgantipw', 'LoginController::changePassword');
+    $routes->post('/csgantipw', '::changePassword');
 });
