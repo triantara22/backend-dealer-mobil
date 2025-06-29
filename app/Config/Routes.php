@@ -99,7 +99,7 @@ $routes->group('', ['filter' => 'Auth:sales'], function ($routes) {
     $routes->post('/salespelanggan/create', 'Salespelanggan::create');
     $routes->get('/salespelanggan/filter/(:segment)', 'Salespelanggan::filtersales/$1');
 
-    $routes->put('/salespelanggan/konnfirmasi/(:segment)', 'Salespelanggan::konfirmasi/$1');
+    $routes->put('/salespelanggan/konfirmasi/(:segment)', 'Salespelanggan::konfirmasi/$1');
 
     $routes->post('/salesgantipw', 'LoginController::changePassword');
 });
